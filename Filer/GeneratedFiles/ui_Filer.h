@@ -11,7 +11,7 @@
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
-#include <QtWidgets/QListView>
+#include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -19,19 +19,23 @@ QT_BEGIN_NAMESPACE
 class Ui_FilerClass
 {
 public:
-    QListView *listView;
+    QWidget *verticalLayoutWidget;
+    QVBoxLayout *verticalLayout;
 
     void setupUi(QWidget *FilerClass)
     {
         if (FilerClass->objectName().isEmpty())
             FilerClass->setObjectName(QStringLiteral("FilerClass"));
-        FilerClass->resize(717, 394);
-        listView = new QListView(FilerClass);
-        listView->setObjectName(QStringLiteral("listView"));
-        listView->setGeometry(QRect(20, 40, 341, 231));
-        listView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        listView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-        listView->setAlternatingRowColors(true);
+        FilerClass->resize(567, 367);
+        verticalLayoutWidget = new QWidget(FilerClass);
+        verticalLayoutWidget->setObjectName(QStringLiteral("verticalLayoutWidget"));
+        verticalLayoutWidget->setGeometry(QRect(9, 9, 551, 351));
+        verticalLayout = new QVBoxLayout(verticalLayoutWidget);
+        verticalLayout->setSpacing(6);
+        verticalLayout->setContentsMargins(11, 11, 11, 11);
+        verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
+        verticalLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
+        verticalLayout->setContentsMargins(0, 0, 0, 0);
 
         retranslateUi(FilerClass);
 

@@ -1,19 +1,16 @@
 #pragma once
 
-#include <QtWidgets/QWidget>
-#include "ui_Filer.h"
+#include <QTableView>
+#include "ui_TabContentView.h"
 
-class Filer : public QWidget
+class TabContentView : public QTableView
 {
 	Q_OBJECT
 
 public:
-	Filer(QWidget *parent = Q_NULLPTR);
+	TabContentView(QWidget *parent = Q_NULLPTR);
+	~TabContentView();
 
-#if 1
-private:
-	Ui::FilerClass ui;
-#else
 private:
 	bool eventFilter(QObject *obj, QEvent *event);
 	void listCursorUp();
@@ -22,15 +19,16 @@ private:
 	void goUpDirectory();
 	void setPath(const QString &path);
 
-private:
-	Ui::FilerClass ui;
-	QFileSystemModel *fileSystemModel;
-
 private slots:
-	void on_listView_clicked(const QModelIndex &index);
+	void on_TabContentView_clicked(const QModelIndex &index);
+	void on_TabContentView_doubleClicked(const QModelIndex &index);
 	void directoryLoaded(const QString &path);
 	void rootPathChanged(const QString &newPath);
 	void currentChanged(const QModelIndex & current, const QModelIndex & previous);
 	void customContextMenuRequested(const QPoint &pos);
-#endif
+
+private:
+	Ui::TabContentView ui;
+	QFileSystemModel *fileSystemModel;
+
 };

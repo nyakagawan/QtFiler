@@ -1,40 +1,25 @@
 #include "stdafx.h"
-#include "Filer.h"
-#include "WindowsContextMenu.h"
 #include "TabContentView.h"
+#include "WindowsContextMenu.h"
 
-#if 1
-
-Filer::Filer(QWidget *parent)
-	: QWidget(parent)
+TabContentView::TabContentView(QWidget *parent)
+	: QTableView(parent)
+	, fileSystemModel(nullptr)
 {
 	ui.setupUi(this);
 
-	auto tabWidget = new QTabWidget(this);
-	ui.verticalLayout->addWidget(tabWidget);
+	fileSystemModel = new QFileSystemModel();
+	fileSystemModel->setRootPath("C:/");
+	fileSystemModel->setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
+	this->setModel(fileSystemModel);
 
-	auto tableView = new TabContentView(this);
-	tabWidget->addTab(tableView, "tab1");
-}
+	this->installEventFilter(this);
+	this->setSelectionMode(QAbstractItemView::SingleSelection);
+	this->setSelectionBehavior(QAbstractItemView::SelectRows);
+	this->setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
 
-#else
-Filer::Filer(QWidget *parent)
-	: QWidget(parent)
-{
-	ui.setupUi(this);
-
-	auto *model = new QFileSystemModel();
-	model->setRootPath("C:/");
-	model->setFilter(QDir::AllEntries | QDir::NoDot);
-	ui.listView->setModel(model);
-	ui.listView->setRootIndex(model->index("C:/Qt"));
-	fileSystemModel = model;
-
-	ui.listView->installEventFilter(this);
-	ui.listView->setSelectionBehavior(QAbstractItemView::SelectRows);
-	ui.listView->setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
 	connect(
-		ui.listView,
+		this,
 		SIGNAL(customContextMenuRequested(QPoint)),
 		this,
 		SLOT(customContextMenuRequested(QPoint)));
@@ -58,13 +43,17 @@ Filer::Filer(QWidget *parent)
 		SLOT(currentChanged(QFileInfo, QFileInfo)));
 }
 
-void Filer::customContextMenuRequested(const QPoint &pos)
+TabContentView::~TabContentView()
 {
-	auto index = ui.listView->indexAt(pos);
+}
+
+void TabContentView::customContextMenuRequested(const QPoint &pos)
+{
+	auto index = this->indexAt(pos);
 	if (index.isValid())
 	{
 		auto path = fileSystemModel->filePath(index);
-		showWindowsContext(path);
+		showWindowsContext(path, nullptr);
 	}
 	else
 	{
@@ -72,7 +61,7 @@ void Filer::customContextMenuRequested(const QPoint &pos)
 	}
 }
 
-bool Filer::eventFilter(QObject *obj, QEvent *event)
+bool TabContentView::eventFilter(QObject *obj, QEvent *event)
 {
 	//qDebug() << "eventFilter:" << event->type();
 
@@ -94,6 +83,26 @@ bool Filer::eventFilter(QObject *obj, QEvent *event)
 		case Qt::Key_U://Up the directory hierarchy
 			goUpDirectory();
 			return true;
+		case Qt::Key_T://ContextMenu
+			{
+				QPoint pos;
+				QString path;
+				if ((keyEvent->modifiers() & Qt::KeyboardModifier::ControlModifier) != 0)
+				{
+					//カレントディレクトリのContextMenuOpen
+					path = fileSystemModel->filePath(currentIndex().parent());
+					pos = parentWidget()->mapToGlobal(QPoint(0, 0));
+				}
+				else
+				{
+					//カレントIndexのContextMenuOpen
+					path = fileSystemModel->filePath(currentIndex());
+					auto rect = visualRect(currentIndex());
+					pos = parentWidget()->mapToGlobal(rect.bottomLeft() + QPoint(0, rect.height()));
+				}
+				showWindowsContext(path, &pos);
+			}
+			return true;
 		default:
 			break;
 		}
@@ -102,26 +111,26 @@ bool Filer::eventFilter(QObject *obj, QEvent *event)
 	return QObject::eventFilter(obj, event);
 }
 
-void Filer::listCursorUp()
+void TabContentView::listCursorUp()
 {
-	auto index = ui.listView->currentIndex();
+	auto index = this->currentIndex();
 	if (index.row() == 0)return;
 	auto next = index.siblingAtRow(index.row() - 1);
-	ui.listView->setCurrentIndex(next);
+	this->setCurrentIndex(next);
 }
 
-void Filer::listCursorDown()
+void TabContentView::listCursorDown()
 {
-	auto index = ui.listView->currentIndex();
-	auto rowCount = ui.listView->model()->rowCount(index.parent());
+	auto index = this->currentIndex();
+	auto rowCount = this->model()->rowCount(index.parent());
 	if (index.row() == rowCount - 1)return;
 	auto next = index.siblingAtRow(index.row() + 1);
-	ui.listView->setCurrentIndex(next);
+	this->setCurrentIndex(next);
 }
 
-void Filer::enterDirectory()
+void TabContentView::enterDirectory()
 {
-	auto index = ui.listView->currentIndex();
+	auto index = this->currentIndex();
 	auto fileInfo = fileSystemModel->fileInfo(index);
 	if (fileInfo.isDir())
 	{
@@ -130,9 +139,9 @@ void Filer::enterDirectory()
 	}
 }
 
-void Filer::goUpDirectory()
+void TabContentView::goUpDirectory()
 {
-	auto index = ui.listView->rootIndex();
+	auto index = this->rootIndex();
 	auto filePath = fileSystemModel->filePath(index);
 	auto dir = QDir(filePath);
 	if (dir.isRoot())
@@ -143,11 +152,15 @@ void Filer::goUpDirectory()
 	setPath(path);
 }
 
-void Filer::on_listView_clicked(const QModelIndex &index)
+void TabContentView::on_TabContentView_clicked(const QModelIndex &index)
+{
+}
+
+void TabContentView::on_TabContentView_doubleClicked(const QModelIndex &index)
 {
 	auto fileInfo = fileSystemModel->fileInfo(index);
 	auto path = fileInfo.absoluteFilePath();
-	qDebug() << "on_listView_clicked:" << path;
+	qDebug() << "on_TabContentView_doubleClicked:" << path;
 
 	if (fileInfo.isDir())
 	{
@@ -155,22 +168,22 @@ void Filer::on_listView_clicked(const QModelIndex &index)
 	}
 }
 
-void Filer::setPath(const QString& dirPath)
+void TabContentView::setPath(const QString& dirPath)
 {
-	ui.listView->clearSelection();
+	this->clearSelection();
 	fileSystemModel->setRootPath(dirPath);
 }
 
-void Filer::directoryLoaded(const QString &path)
+void TabContentView::directoryLoaded(const QString &path)
 {
 	qDebug() << "directoryLoaded:" << path;
 
 	// 前回のパスが子ディレクトリであれば、そこを初期カーソル位置とする
-	QModelIndex newCursorIndex = ui.listView->rootIndex();
+	QModelIndex newCursorIndex = this->rootIndex();
 
 	// setPath() によって発生した場合はカーソル位置を再設定する
 	QModelIndex newDirIndex = fileSystemModel->index(path);
-	ui.listView->setRootIndex(newDirIndex);
+	this->setRootIndex(newDirIndex);
 
 	if (!newCursorIndex.isValid() || newCursorIndex.parent() != newDirIndex || newCursorIndex.row() < 0)
 	{
@@ -178,15 +191,15 @@ void Filer::directoryLoaded(const QString &path)
 		newCursorIndex = fileSystemModel->index(0, 0, newDirIndex);
 	}
 
-	ui.listView->setCurrentIndex(newCursorIndex);
-	ui.listView->scrollTo(newCursorIndex);
+	this->setCurrentIndex(newCursorIndex);
+	this->scrollTo(newCursorIndex);
 }
 
-void Filer::rootPathChanged(const QString &newPath)
+void TabContentView::rootPathChanged(const QString &newPath)
 {
 }
 
-void Filer::currentChanged(const QModelIndex & current, const QModelIndex & previous)
+void TabContentView::currentChanged(const QModelIndex & current, const QModelIndex & previous)
 {
 	qDebug() << "currentChanged:" << fileSystemModel->filePath(current) << ", " << fileSystemModel->filePath(current);
 #if 0
@@ -202,5 +215,6 @@ void Filer::currentChanged(const QModelIndex & current, const QModelIndex & prev
 		bottomRight = fileSystemModel->index(current.row(), fileSystemModel->columnCount());
 	}
 #endif
+	this->scrollTo(currentIndex());
+	setFocus();
 }
-#endif

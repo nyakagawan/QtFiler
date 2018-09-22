@@ -18,7 +18,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
-void showWindowsContext(const QString path)
+void showWindowsContext(const QString path, const QPoint* pos)
 {
 	QString rpath = path;
 	rpath.replace(u8"/", u8"\\");
@@ -73,7 +73,15 @@ void showWindowsContext(const QString path)
 		hmenuPopup = CreatePopupMenu();
 		pContextMenu2->QueryContextMenu(hmenuPopup, 0, 1, 0x7fff, CMF_NORMAL);
 
-		GetCursorPos(&pt);
+		if (pos == nullptr)
+		{
+			GetCursorPos(&pt);
+		}
+		else
+		{
+			pt.x = pos->x();
+			pt.y = pos->y();
+		}
 		nId = TrackPopupMenu(hmenuPopup, TPM_RETURNCMD, pt.x, pt.y, 0, hwnd, NULL);
 	}
 

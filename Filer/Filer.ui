@@ -6,31 +6,27 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>717</width>
-    <height>394</height>
+    <width>567</width>
+    <height>367</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Filer</string>
   </property>
-  <widget class="QListView" name="listView">
+  <widget class="QWidget" name="verticalLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>40</y>
-     <width>341</width>
-     <height>231</height>
+     <x>9</x>
+     <y>9</y>
+     <width>551</width>
+     <height>351</height>
     </rect>
    </property>
-   <property name="horizontalScrollBarPolicy">
-    <enum>Qt::ScrollBarAlwaysOff</enum>
-   </property>
-   <property name="editTriggers">
-    <set>QAbstractItemView::NoEditTriggers</set>
-   </property>
-   <property name="alternatingRowColors">
-    <bool>true</bool>
-   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="sizeConstraint">
+     <enum>QLayout::SetDefaultConstraint</enum>
+    </property>
+   </layout>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

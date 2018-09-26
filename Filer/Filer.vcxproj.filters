@@ -45,6 +45,12 @@
     <ClCompile Include="TabContentView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MultiTabPane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -61,12 +67,21 @@
     <QtMoc Include="TabContentView.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="MultiTabPane.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Settings.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="Filer.ui">
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="TabContentView.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="MultiTabPane.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>

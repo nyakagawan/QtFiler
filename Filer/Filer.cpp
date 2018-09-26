@@ -1,28 +1,29 @@
 #include "stdafx.h"
 #include "Filer.h"
 #include "WindowsContextMenu.h"
-#include "TabContentView.h"
+#include "MultiTabPane.h"
+#include "Settings.h"
 
 Filer::Filer(QWidget *parent)
 	: QWidget(parent)
 {
 	ui.setupUi(this);
 
-	{
-		auto tabWidget = new QTabWidget(this);
-		ui.verticalLayout_left->addWidget(tabWidget);
+	Settings::create();
 
-		auto tableView = new TabContentView(this);
-		tabWidget->addTab(tableView, "tab1");
+	{
+		auto pane = new MultiTabPane(this);
+		ui.verticalLayout_left->addWidget(pane);
 	}
 
 	{
-		auto tabWidget = new QTabWidget(this);
-		ui.verticalLayout_right->addWidget(tabWidget);
-
-		auto tableView = new TabContentView(this);
-		tabWidget->addTab(tableView, "tab1");
+		auto pane = new MultiTabPane(this);
+		ui.verticalLayout_right->addWidget(pane);
 	}
+
+	auto settings = Settings::getInstance();
+	qDebug() << settings->getWindowSize();
+	resize(settings->getWindowSize());
 }
 
 void Filer::showEvent(QShowEvent *event)
@@ -39,4 +40,15 @@ void Filer::showEvent(QShowEvent *event)
 	{
 		qDebug() << size;
 	}
+}
+
+void Filer::closeEvent(QCloseEvent * event)
+{
+	qDebug() << "closeEvent";
+
+	auto settings = Settings::getInstance();
+	settings->setWindowSize(size());
+	settings->flush();
+
+	QWidget::closeEvent(event);//super class
 }

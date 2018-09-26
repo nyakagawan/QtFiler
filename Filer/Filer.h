@@ -10,6 +10,9 @@ class Filer : public QWidget
 public:
 	Filer(QWidget *parent = Q_NULLPTR);
 
+protected:
+	void showEvent(QShowEvent *event) override;
+
 private:
 	Ui::FilerClass ui;
 };

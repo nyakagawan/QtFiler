@@ -2,13 +2,16 @@
 
 #include <QTableView>
 #include "ui_TabContentView.h"
+#include <functional>
 
 class TabContentView : public QTableView
 {
 	Q_OBJECT
 
 public:
-	TabContentView(QWidget *parent = Q_NULLPTR);
+	typedef std::function<bool(QObject*, QEvent*)> EventFilterHandler;
+public:
+	TabContentView(EventFilterHandler eventFilter, QWidget *parent = Q_NULLPTR);
 	~TabContentView();
 
 private:
@@ -28,7 +31,8 @@ private slots:
 	void customContextMenuRequested(const QPoint &pos);
 
 private:
-	Ui::TabContentView ui;
-	QFileSystemModel *fileSystemModel;
+	Ui::TabContentView _ui;
+	QFileSystemModel *_fsModel;
+	EventFilterHandler _eventFilter;
 
 };

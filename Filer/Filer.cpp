@@ -4,21 +4,25 @@
 #include "MultiTabPane.h"
 #include "Settings.h"
 
+Filer* Filer::_pInstance = nullptr;
+
 Filer::Filer(QWidget *parent)
 	: QWidget(parent)
 {
+	_pInstance = this;
+
 	ui.setupUi(this);
 
 	Settings::create();
 
 	{
-		auto pane = new MultiTabPane(this);
-		ui.verticalLayout_left->addWidget(pane);
+		_pLeftTabPane = new MultiTabPane(this);
+		ui.verticalLayout_left->addWidget(_pLeftTabPane);
 	}
 
 	{
-		auto pane = new MultiTabPane(this);
-		ui.verticalLayout_right->addWidget(pane);
+		_pRightTabPane = new MultiTabPane(this);
+		ui.verticalLayout_right->addWidget(_pRightTabPane);
 	}
 
 	auto settings = Settings::getInstance();

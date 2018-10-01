@@ -1,17 +1,20 @@
 #include "stdafx.h"
+#include "Filer.h"
+#include "MultiTabPane.h"
 #include "TabContentView.h"
 #include "WindowsContextMenu.h"
 
-TabContentView::TabContentView(QWidget *parent)
+TabContentView::TabContentView(EventFilterHandler eventFilter, QWidget *parent)
 	: QTableView(parent)
-	, fileSystemModel(nullptr)
+	, _fsModel(nullptr)
+	, _eventFilter(eventFilter)
 {
-	ui.setupUi(this);
+	_ui.setupUi(this);
 
-	fileSystemModel = new QFileSystemModel();
-	fileSystemModel->setRootPath("C:/");
-	fileSystemModel->setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
-	this->setModel(fileSystemModel);
+	_fsModel = new QFileSystemModel();
+	_fsModel->setRootPath("C:/");
+	_fsModel->setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
+	this->setModel(_fsModel);
 
 	this->installEventFilter(this);
 	this->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -25,19 +28,19 @@ TabContentView::TabContentView(QWidget *parent)
 		SLOT(customContextMenuRequested(QPoint)));
 
 	connect(
-		fileSystemModel,
+		_fsModel,
 		SIGNAL(directoryLoaded(QString)),
 		this,
 		SLOT(directoryLoaded(QString)));
 
 	connect(
-		fileSystemModel,
+		_fsModel,
 		SIGNAL(rootPathChanged(QString)),
 		this,
 		SLOT(rootPathChanged(QString)));
 
 	connect(
-		fileSystemModel,
+		_fsModel,
 		SIGNAL(currentChanged(QFileInfo, QFileInfo)),
 		this,
 		SLOT(currentChanged(QFileInfo, QFileInfo)));
@@ -52,7 +55,7 @@ void TabContentView::customContextMenuRequested(const QPoint &pos)
 	auto index = this->indexAt(pos);
 	if (index.isValid())
 	{
-		auto path = fileSystemModel->filePath(index);
+		auto path = _fsModel->filePath(index);
 		showWindowsContext(path, nullptr);
 	}
 	else
@@ -63,12 +66,15 @@ void TabContentView::customContextMenuRequested(const QPoint &pos)
 
 bool TabContentView::eventFilter(QObject *obj, QEvent *event)
 {
-	//qDebug() << "eventFilter:" << event->type();
+	if (_eventFilter(obj, event))
+		return true;
+
+	//qDebug() << "TabContentView::eventFilter:" << event->type();
 
 	if (event->type() == QEvent::KeyPress)
 	{
 		QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
-		//qDebug("Ate key press %d", keyEvent->key());
+		qDebug("Ate key press %d", keyEvent->key());
 		switch (keyEvent->key())
 		{
 		case Qt::Key_K:
@@ -83,6 +89,12 @@ bool TabContentView::eventFilter(QObject *obj, QEvent *event)
 		case Qt::Key_U://Up the directory hierarchy
 			goUpDirectory();
 			return true;
+		case Qt::Key_H:
+			Filer::getInstance()->getLeftTabPane()->getView()->setFocus();
+			return true;
+		case Qt::Key_L:
+			Filer::getInstance()->getRightTabPane()->getView()->setFocus();
+			return true;
 		case Qt::Key_T://ContextMenu
 			{
 				QPoint pos;
@@ -90,13 +102,13 @@ bool TabContentView::eventFilter(QObject *obj, QEvent *event)
 				if ((keyEvent->modifiers() & Qt::KeyboardModifier::ControlModifier) != 0)
 				{
 					//カレントディレクトリのContextMenuOpen
-					path = fileSystemModel->filePath(currentIndex().parent());
+					path = _fsModel->filePath(currentIndex().parent());
 					pos = parentWidget()->mapToGlobal(QPoint(0, 0));
 				}
 				else
 				{
 					//カレントIndexのContextMenuOpen
-					path = fileSystemModel->filePath(currentIndex());
+					path = _fsModel->filePath(currentIndex());
 					auto rect = visualRect(currentIndex());
 					pos = parentWidget()->mapToGlobal(rect.bottomLeft() + QPoint(0, rect.height()));
 				}
@@ -131,7 +143,7 @@ void TabContentView::listCursorDown()
 void TabContentView::enterDirectory()
 {
 	auto index = this->currentIndex();
-	auto fileInfo = fileSystemModel->fileInfo(index);
+	auto fileInfo = _fsModel->fileInfo(index);
 	if (fileInfo.isDir())
 	{
 		auto path = fileInfo.absoluteFilePath();
@@ -142,13 +154,13 @@ void TabContentView::enterDirectory()
 void TabContentView::goUpDirectory()
 {
 	auto index = this->rootIndex();
-	auto filePath = fileSystemModel->filePath(index);
+	auto filePath = _fsModel->filePath(index);
 	auto dir = QDir(filePath);
 	if (dir.isRoot())
 	{
 		return;
 	}
-	auto path = fileSystemModel->filePath(index.parent());
+	auto path = _fsModel->filePath(index.parent());
 	setPath(path);
 }
 
@@ -158,7 +170,7 @@ void TabContentView::on_TabContentView_clicked(const QModelIndex &index)
 
 void TabContentView::on_TabContentView_doubleClicked(const QModelIndex &index)
 {
-	auto fileInfo = fileSystemModel->fileInfo(index);
+	auto fileInfo = _fsModel->fileInfo(index);
 	auto path = fileInfo.absoluteFilePath();
 	qDebug() << "on_TabContentView_doubleClicked:" << path;
 
@@ -171,7 +183,7 @@ void TabContentView::on_TabContentView_doubleClicked(const QModelIndex &index)
 void TabContentView::setPath(const QString& dirPath)
 {
 	this->clearSelection();
-	fileSystemModel->setRootPath(dirPath);
+	_fsModel->setRootPath(dirPath);
 }
 
 void TabContentView::directoryLoaded(const QString &path)
@@ -182,13 +194,13 @@ void TabContentView::directoryLoaded(const QString &path)
 	QModelIndex newCursorIndex = this->rootIndex();
 
 	// setPath() によって発生した場合はカーソル位置を再設定する
-	QModelIndex newDirIndex = fileSystemModel->index(path);
+	QModelIndex newDirIndex = _fsModel->index(path);
 	this->setRootIndex(newDirIndex);
 
 	if (!newCursorIndex.isValid() || newCursorIndex.parent() != newDirIndex || newCursorIndex.row() < 0)
 	{
 		// 初期カーソル位置はリストの先頭
-		newCursorIndex = fileSystemModel->index(0, 0, newDirIndex);
+		newCursorIndex = _fsModel->index(0, 0, newDirIndex);
 	}
 
 	this->setCurrentIndex(newCursorIndex);
@@ -201,7 +213,7 @@ void TabContentView::rootPathChanged(const QString &newPath)
 
 void TabContentView::currentChanged(const QModelIndex & current, const QModelIndex & previous)
 {
-	qDebug() << "currentChanged:" << fileSystemModel->filePath(current) << ", " << fileSystemModel->filePath(current);
+	qDebug() << "currentChanged:" << _fsModel->filePath(current) << ", " << _fsModel->filePath(previous);
 #if 0
 	QModelIndex topLeft, bottomRight;
 	if (current.row() < previous.row())

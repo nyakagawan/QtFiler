@@ -42,3 +42,16 @@ void Settings::initialize()
 	_windowSize = value(KeyWindowSize, _windowSize).toSize();
 	qDebug() << KeyWindowSize << ": " << _windowSize;
 }
+
+QColor Settings::getColorSetting(const QString& colorSettingType)
+{
+	QColor ret;
+
+	QMap<QString, QColor>::const_iterator itr = _colorSettings.find(colorSettingType);
+	if (itr != _colorSettings.end())
+	{
+		ret = *itr;
+	}
+
+	return ret;
+}

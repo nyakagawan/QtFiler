@@ -3,23 +3,46 @@
 #include "MultiTabPane.h"
 #include "TabContentView.h"
 #include "WindowsContextMenu.h"
+#include "FolderViewStyledItemDelegate.h"
+#include "FolderModel.h"
+#include "Settings.h"
 
 TabContentView::TabContentView(EventFilterHandler eventFilter, QWidget *parent)
 	: QTableView(parent)
-	, _fsModel(nullptr)
+	, _folderModel(new FolderModel(this))
 	, _eventFilter(eventFilter)
 {
 	_ui.setupUi(this);
 
-	_fsModel = new QFileSystemModel();
-	_fsModel->setRootPath("C:/");
-	_fsModel->setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
-	this->setModel(_fsModel);
+	setItemDelegate(new FolderViewStyledItemDelegate(this));
 
-	this->installEventFilter(this);
-	this->setSelectionMode(QAbstractItemView::SingleSelection);
-	this->setSelectionBehavior(QAbstractItemView::SelectRows);
-	this->setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
+	_folderModel->setReadOnly(true);
+	_folderModel->setDynamicSortFilter(true);
+	_folderModel->setSortLocaleAware(true);
+	setModel(_folderModel);
+	_folderModel->setRootPath("C:\\");
+
+	{
+		QMap<ColorRoleType, QColor> colors;
+
+		colors[ColorRoleType::Normal] = Settings::getInstance()->getColorSetting("folderView_normal");
+		colors[ColorRoleType::Normal_Selected] = Settings::getInstance()->getColorSetting("folderView_normal_selected");
+		colors[ColorRoleType::Folder] = Settings::getInstance()->getColorSetting("folderView_folder");
+		colors[ColorRoleType::Folder_Selected] = Settings::getInstance()->getColorSetting("folderView_folder_selected");
+		colors[ColorRoleType::ReadOnly] = Settings::getInstance()->getColorSetting("folderView_readOnly");
+		colors[ColorRoleType::ReadOnly_Selected] = Settings::getInstance()->getColorSetting("folderView_readOnly_selected");
+		colors[ColorRoleType::Hidden] = Settings::getInstance()->getColorSetting("folderView_hidden");
+		colors[ColorRoleType::Hidden_Selected] = Settings::getInstance()->getColorSetting("folderView_hidden_selected");
+		colors[ColorRoleType::System] = Settings::getInstance()->getColorSetting("folderView_system");
+		colors[ColorRoleType::System_Selected] = Settings::getInstance()->getColorSetting("folderView_system_selected");
+
+		colors[ColorRoleType::Background] = Settings::getInstance()->getColorSetting("folderView_background");
+		colors[ColorRoleType::Selected_Background] = Settings::getInstance()->getColorSetting("folderView_selected_background");
+		_folderModel->initBrushes(colors);
+	}
+
+	setSelectionModel(_folderModel->getSelectionModel());
+	setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
 
 	connect(
 		this,
@@ -28,19 +51,13 @@ TabContentView::TabContentView(EventFilterHandler eventFilter, QWidget *parent)
 		SLOT(customContextMenuRequested(QPoint)));
 
 	connect(
-		_fsModel,
+		_folderModel,
 		SIGNAL(directoryLoaded(QString)),
 		this,
 		SLOT(directoryLoaded(QString)));
 
 	connect(
-		_fsModel,
-		SIGNAL(rootPathChanged(QString)),
-		this,
-		SLOT(rootPathChanged(QString)));
-
-	connect(
-		_fsModel,
+		_folderModel,
 		SIGNAL(currentChanged(QFileInfo, QFileInfo)),
 		this,
 		SLOT(currentChanged(QFileInfo, QFileInfo)));
@@ -48,6 +65,42 @@ TabContentView::TabContentView(EventFilterHandler eventFilter, QWidget *parent)
 
 TabContentView::~TabContentView()
 {
+	delete _folderModel;
+}
+
+void TabContentView::setModel(FolderModel *model)
+{
+	QTableView::setModel(model);
+
+	horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+	horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+}
+
+QItemSelectionModel::SelectionFlags TabContentView::selectionCommand(const QModelIndex& index, const QEvent* e/* = Q_NULLPTR*/) const
+{
+	QItemSelectionModel::SelectionFlags ret = QTableView::selectionCommand(index, e);
+
+	// ここでは選択処理は行わない
+	ret &= ~(QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Toggle);
+
+	return ret;
+}
+
+void TabContentView::selectCurrent(QItemSelectionModel::SelectionFlag selectionFlag/* = QItemSelectionModel::Toggle*/)
+{
+	FolderModel* folderModel = qobject_cast<FolderModel*>(model());
+	Q_ASSERT(folderModel);
+
+	const QModelIndex index = currentIndex();
+	if (folderModel->fileName(index) != "..")
+	{
+		folderModel->setSelect(index.row(), selectionFlag, index.parent());
+	}
+}
+
+void TabContentView::refresh(const QModelIndex& topLeft, const QModelIndex& bottomRight)
+{
+	emit dataChanged(topLeft, bottomRight);
 }
 
 void TabContentView::customContextMenuRequested(const QPoint &pos)
@@ -55,7 +108,7 @@ void TabContentView::customContextMenuRequested(const QPoint &pos)
 	auto index = this->indexAt(pos);
 	if (index.isValid())
 	{
-		auto path = _fsModel->filePath(index);
+		auto path = _folderModel->filePath(index);
 		showWindowsContext(path, nullptr);
 	}
 	else
@@ -64,63 +117,121 @@ void TabContentView::customContextMenuRequested(const QPoint &pos)
 	}
 }
 
-bool TabContentView::eventFilter(QObject *obj, QEvent *event)
+void TabContentView::keyPressEvent(QKeyEvent *e)
 {
-	if (_eventFilter(obj, event))
-		return true;
-
-	//qDebug() << "TabContentView::eventFilter:" << event->type();
-
-	if (event->type() == QEvent::KeyPress)
+	switch (e->key())
 	{
-		QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
-		qDebug("Ate key press %d", keyEvent->key());
-		switch (keyEvent->key())
+	case Qt::Key_K:
+	case Qt::Key_Up:
+		listCursorUp();
+		e->accept();
+		return;
+	case Qt::Key_J:
+	case Qt::Key_Down:
+		listCursorDown();
+		e->accept();
+		return;
+	case Qt::Key_PageUp:
+	case Qt::Key_PageDown:
+		QTableView::keyPressEvent(e);
+		return;
+	case Qt::Key_Space:
+		selectCurrent();
+		listCursorDown();
+		e->accept();
+		return;
+	case Qt::Key_G://Enter directory
+		enterDirectory();
+		e->accept();
+		return;
+	case Qt::Key_U://Up the directory hierarchy
+		goUpDirectory();
+		e->accept();
+		return;
+	case Qt::Key_H:
+		Filer::getInstance()->getLeftTabPane()->getView()->setFocus();
+		e->accept();
+		return;
+	case Qt::Key_L:
+		Filer::getInstance()->getRightTabPane()->getView()->setFocus();
+		e->accept();
+		return;
+	case Qt::Key_T://ContextMenu
 		{
-		case Qt::Key_K:
-			listCursorUp();
-			return true;
-		case Qt::Key_J:
-			listCursorDown();
-			return true;
-		case Qt::Key_G://Enter directory
-			enterDirectory();
-			return true;
-		case Qt::Key_U://Up the directory hierarchy
-			goUpDirectory();
-			return true;
-		case Qt::Key_H:
-			Filer::getInstance()->getLeftTabPane()->getView()->setFocus();
-			return true;
-		case Qt::Key_L:
-			Filer::getInstance()->getRightTabPane()->getView()->setFocus();
-			return true;
-		case Qt::Key_T://ContextMenu
+			QPoint pos;
+			QString path;
+			if ((e->modifiers() & Qt::KeyboardModifier::ControlModifier) != 0)
 			{
-				QPoint pos;
-				QString path;
-				if ((keyEvent->modifiers() & Qt::KeyboardModifier::ControlModifier) != 0)
-				{
-					//カレントディレクトリのContextMenuOpen
-					path = _fsModel->filePath(currentIndex().parent());
-					pos = parentWidget()->mapToGlobal(QPoint(0, 0));
-				}
-				else
-				{
-					//カレントIndexのContextMenuOpen
-					path = _fsModel->filePath(currentIndex());
-					auto rect = visualRect(currentIndex());
-					pos = parentWidget()->mapToGlobal(rect.bottomLeft() + QPoint(0, rect.height()));
-				}
-				showWindowsContext(path, &pos);
+				//カレントディレクトリのContextMenuOpen
+				path = _folderModel->filePath(currentIndex().parent());
+				pos = parentWidget()->mapToGlobal(QPoint(0, 0));
 			}
-			return true;
-		default:
-			break;
+			else
+			{
+				//カレントIndexのContextMenuOpen
+				path = _folderModel->filePath(currentIndex());
+				auto rect = visualRect(currentIndex());
+				pos = parentWidget()->mapToGlobal(rect.bottomLeft() + QPoint(0, rect.height()));
+			}
+			showWindowsContext(path, &pos);
+			e->accept();
+			return;
 		}
+	case Qt::Key_Return:
+		{
+			// Return は Designer のショートカットの設定では効かないようなので、ハードコーディングする
+			Q_ASSERT(_folderModel);
+
+			const auto path = _folderModel->fileInfo(currentIndex()).absoluteFilePath();
+			if (e->modifiers() & Qt::ShiftModifier)
+			{
+				//emitOpenWithApp(path);
+			}
+			else
+			{
+				//emitOpen(path);
+			}
+
+			e->accept();
+			return;
+		}
+	default:
+		break;
 	}
-	// standard event processing
-	return QObject::eventFilter(obj, event);
+
+	if (e->modifiers() & Qt::ShiftModifier && !e->text().isEmpty())
+	{
+		QString text = e->text();
+
+		if (e->key() == Qt::Key_Greater)
+		{
+			// SHIFT + '.'キーを押すと '>' となってしまうため、強制的に '.' にする
+			text = ".";
+		}
+
+		// keyboradSearch() 内で文字を連結させず、必ず1文字目として検索させるようにするため、一時的にキー入力のインターバル値を0にする
+		int backupInterval = QApplication::keyboardInputInterval();
+		QApplication::setKeyboardInputInterval(0);
+
+		keyboardSearch(text);
+
+		QApplication::setKeyboardInputInterval(backupInterval);
+
+		e->accept();
+
+		return;
+	}
+
+	e->ignore();
+}
+
+void TabContentView::setCursor(const QModelIndex& index)
+{
+	if (index.isValid())
+	{
+		setCurrentIndex(index);
+		scrollTo(index);
+	}
 }
 
 void TabContentView::listCursorUp()
@@ -128,7 +239,7 @@ void TabContentView::listCursorUp()
 	auto index = this->currentIndex();
 	if (index.row() == 0)return;
 	auto next = index.siblingAtRow(index.row() - 1);
-	this->setCurrentIndex(next);
+	setCursor(next);
 }
 
 void TabContentView::listCursorDown()
@@ -137,16 +248,15 @@ void TabContentView::listCursorDown()
 	auto rowCount = this->model()->rowCount(index.parent());
 	if (index.row() == rowCount - 1)return;
 	auto next = index.siblingAtRow(index.row() + 1);
-	this->setCurrentIndex(next);
+	setCursor(next);
 }
 
 void TabContentView::enterDirectory()
 {
 	auto index = this->currentIndex();
-	auto fileInfo = _fsModel->fileInfo(index);
-	if (fileInfo.isDir())
+	if (_folderModel->isDir(index))
 	{
-		auto path = fileInfo.absoluteFilePath();
+		auto path = _folderModel->filePath(index);
 		setPath(path);
 	}
 }
@@ -154,13 +264,13 @@ void TabContentView::enterDirectory()
 void TabContentView::goUpDirectory()
 {
 	auto index = this->rootIndex();
-	auto filePath = _fsModel->filePath(index);
+	auto filePath = _folderModel->filePath(index);
 	auto dir = QDir(filePath);
 	if (dir.isRoot())
 	{
 		return;
 	}
-	auto path = _fsModel->filePath(index.parent());
+	auto path = _folderModel->filePath(index.parent());
 	setPath(path);
 }
 
@@ -170,11 +280,10 @@ void TabContentView::on_TabContentView_clicked(const QModelIndex &index)
 
 void TabContentView::on_TabContentView_doubleClicked(const QModelIndex &index)
 {
-	auto fileInfo = _fsModel->fileInfo(index);
-	auto path = fileInfo.absoluteFilePath();
+	auto path = _folderModel->filePath(index);
 	qDebug() << "on_TabContentView_doubleClicked:" << path;
 
-	if (fileInfo.isDir())
+	if (_folderModel->isDir(index))
 	{
 		setPath(path);
 	}
@@ -183,7 +292,7 @@ void TabContentView::on_TabContentView_doubleClicked(const QModelIndex &index)
 void TabContentView::setPath(const QString& dirPath)
 {
 	this->clearSelection();
-	_fsModel->setRootPath(dirPath);
+	_folderModel->setRootPath(dirPath);
 }
 
 void TabContentView::directoryLoaded(const QString &path)
@@ -194,39 +303,37 @@ void TabContentView::directoryLoaded(const QString &path)
 	QModelIndex newCursorIndex = this->rootIndex();
 
 	// setPath() によって発生した場合はカーソル位置を再設定する
-	QModelIndex newDirIndex = _fsModel->index(path);
+	QModelIndex newDirIndex = _folderModel->index(path);
 	this->setRootIndex(newDirIndex);
 
 	if (!newCursorIndex.isValid() || newCursorIndex.parent() != newDirIndex || newCursorIndex.row() < 0)
 	{
 		// 初期カーソル位置はリストの先頭
-		newCursorIndex = _fsModel->index(0, 0, newDirIndex);
+		newCursorIndex = _folderModel->index(0, 0, newDirIndex);
 	}
 
-	this->setCurrentIndex(newCursorIndex);
-	this->scrollTo(newCursorIndex);
-}
-
-void TabContentView::rootPathChanged(const QString &newPath)
-{
+	setCursor(newCursorIndex);
 }
 
 void TabContentView::currentChanged(const QModelIndex & current, const QModelIndex & previous)
 {
-	qDebug() << "currentChanged:" << _fsModel->filePath(current) << ", " << _fsModel->filePath(previous);
-#if 0
+	qDebug() << "currentChanged:" << _folderModel->filePath(current) << ", " << _folderModel->filePath(previous);
+
 	QModelIndex topLeft, bottomRight;
 	if (current.row() < previous.row())
 	{
-		topLeft = fileSystemModel->index(current.row(), 0);
-		bottomRight = fileSystemModel->index(previous.row(), fileSystemModel->columnCount());
+		topLeft = _folderModel->index(current.row(), 0);
+		bottomRight = _folderModel->index(previous.row(), _folderModel->columnCount());
 	}
 	else
 	{
-		topLeft = fileSystemModel->index(previous.row(), 0);
-		bottomRight = fileSystemModel->index(current.row(), fileSystemModel->columnCount());
+		topLeft = _folderModel->index(previous.row(), 0);
+		bottomRight = _folderModel->index(current.row(), _folderModel->columnCount());
 	}
-#endif
+
+	// カーソルが移動した箇所を再描画する
+	refresh(topLeft, bottomRight);
+
 	this->scrollTo(currentIndex());
 	setFocus();
 }

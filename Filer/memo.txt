@@ -1,6 +1,16 @@
 次
 
+[DONE]
 ・左右Paneの移動
+・Spaceキーで項目を選択状態にする
+	QSortFilterProxyModelを継承したFolderModelを使う形に変更中
+
+[WIP]
+・..フォルダを表示しない
+・一度入ったフォルダのカーソル位置を記憶する
+	C:\ -> C:\Users\nyakaにカーソル移動 -> C:\に戻る -> C:\Usresに入る -> C:\Users\..にカーソルがある
+
+[todo]
 ・Copy
 ・出力ウィンドウ
 ・Move

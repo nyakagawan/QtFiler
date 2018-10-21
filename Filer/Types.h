@@ -30,7 +30,7 @@ enum class ColorRoleType : int
 	ColorRoleTypeNum
 };
 
-const QDir::Filters FIX_FILTER_FLAGS = QDir::AllEntries | QDir::AccessMask | QDir::AllDirs | QDir::NoDot;
+const QDir::Filters FIX_FILTER_FLAGS = QDir::AllEntries | QDir::AccessMask | QDir::AllDirs | QDir::NoDot | QDir::NoDotDot;
 const QDir::Filters DEFAULT_FILTER_FLAGS = FIX_FILTER_FLAGS;
 
 enum class SectionType : int

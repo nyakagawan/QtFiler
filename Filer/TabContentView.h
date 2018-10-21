@@ -40,5 +40,6 @@ private:
 	Ui::TabContentView _ui;
 	FolderModel *_folderModel;
 	EventFilterHandler _eventFilter;
-
+	//各RootPathのカーソル位置
+	QMap<QString, int> _rootPathToCursorRow;
 };

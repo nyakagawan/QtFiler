@@ -299,19 +299,19 @@ void TabContentView::directoryLoaded(const QString &path)
 {
 	qDebug() << "directoryLoaded:" << path;
 
-	// 前回のパスが子ディレクトリであれば、そこを初期カーソル位置とする
-	QModelIndex newCursorIndex = this->rootIndex();
-
 	// setPath() によって発生した場合はカーソル位置を再設定する
 	QModelIndex newDirIndex = _folderModel->index(path);
 	this->setRootIndex(newDirIndex);
 
-	if (!newCursorIndex.isValid() || newCursorIndex.parent() != newDirIndex || newCursorIndex.row() < 0)
+	//カーソル位置を復元
+	int row = 0;
+	const auto itr = _rootPathToCursorRow.find(path);
+	if (itr != _rootPathToCursorRow.constEnd())
 	{
-		// 初期カーソル位置はリストの先頭
-		newCursorIndex = _folderModel->index(0, 0, newDirIndex);
+		row = qBound(0, itr.value(), _folderModel->rowCount(newDirIndex));
 	}
 
+	auto newCursorIndex = _folderModel->index(row, 0, newDirIndex);
 	setCursor(newCursorIndex);
 }
 
@@ -336,4 +336,8 @@ void TabContentView::currentChanged(const QModelIndex & current, const QModelInd
 
 	this->scrollTo(currentIndex());
 	setFocus();
+
+	//カーソル位置を記憶しておく
+	auto row = qMax(current.row(), 0);
+	_rootPathToCursorRow[_folderModel->rootPath()] = row;
 }

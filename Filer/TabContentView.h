@@ -5,6 +5,7 @@
 #include <functional>
 
 class FolderModel;
+class MultiTabPane;
 
 class TabContentView : public QTableView
 {
@@ -20,6 +21,8 @@ public:
 	void setModel(FolderModel *folderModel);
 	void selectCurrent(QItemSelectionModel::SelectionFlag selectionFlag = QItemSelectionModel::Toggle);
 	void refresh(const QModelIndex& topLeft, const QModelIndex& bottomRight);
+	void setPath(const QString &path);
+	QString getPath() const;
 private:
 	void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
 	void setCursor(const QModelIndex& index);
@@ -27,7 +30,6 @@ private:
 	void listCursorDown();
 	void enterDirectory();
 	void goUpDirectory();
-	void setPath(const QString &path);
 
 private slots:
 	void on_TabContentView_clicked(const QModelIndex &index);
@@ -38,6 +40,7 @@ private slots:
 
 private:
 	Ui::TabContentView _ui;
+	MultiTabPane* _multiTabPane;
 	FolderModel *_folderModel;
 	EventFilterHandler _eventFilter;
 	//各RootPathのカーソル位置

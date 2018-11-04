@@ -11,7 +11,10 @@ TabContentView::TabContentView(EventFilterHandler eventFilter, QWidget *parent)
 	: QTableView(parent)
 	, _folderModel(new FolderModel(this))
 	, _eventFilter(eventFilter)
+	,_multiTabPane(qobject_cast<MultiTabPane*>(parent))
 {
+	Q_ASSERT(_multiTabPane != nullptr);
+
 	_ui.setupUi(this);
 
 	setItemDelegate(new FolderViewStyledItemDelegate(this));
@@ -20,7 +23,8 @@ TabContentView::TabContentView(EventFilterHandler eventFilter, QWidget *parent)
 	_folderModel->setDynamicSortFilter(true);
 	_folderModel->setSortLocaleAware(true);
 	setModel(_folderModel);
-	_folderModel->setRootPath("C:\\");
+
+	installEventFilter(_multiTabPane);
 
 	{
 		QMap<ColorRoleType, QColor> colors;
@@ -103,6 +107,11 @@ void TabContentView::refresh(const QModelIndex& topLeft, const QModelIndex& bott
 	emit dataChanged(topLeft, bottomRight);
 }
 
+QString TabContentView::getPath() const
+{
+	return _folderModel->rootPath();
+}
+
 void TabContentView::customContextMenuRequested(const QPoint &pos)
 {
 	auto index = this->indexAt(pos);
@@ -131,6 +140,12 @@ void TabContentView::keyPressEvent(QKeyEvent *e)
 		listCursorDown();
 		e->accept();
 		return;
+	case Qt::Key_D:
+		if (e->modifiers() & Qt::KeyboardModifier::ControlModifier)
+		{
+			qApp->postEvent(this, new QKeyEvent(QEvent::Type::KeyPress, Qt::Key_PageDown, Qt::KeyboardModifier::NoModifier));
+		}
+		return;
 	case Qt::Key_PageUp:
 	case Qt::Key_PageDown:
 		QTableView::keyPressEvent(e);
@@ -144,16 +159,25 @@ void TabContentView::keyPressEvent(QKeyEvent *e)
 		enterDirectory();
 		e->accept();
 		return;
-	case Qt::Key_U://Up the directory hierarchy
-		goUpDirectory();
+	case Qt::Key_U:
+		if (e->modifiers() & Qt::KeyboardModifier::ControlModifier)
+		{
+			//PageUp
+			qApp->postEvent(this, new QKeyEvent(QEvent::Type::KeyPress, Qt::Key_PageUp, Qt::KeyboardModifier::NoModifier));
+		}
+		else
+		{
+			//Up the directory hierarchy
+			goUpDirectory();
+		}
 		e->accept();
 		return;
 	case Qt::Key_H:
-		Filer::getInstance()->getLeftTabPane()->getView()->setFocus();
+		Filer::getInstance()->getLeftTabPane()->getCurrentView()->setFocus();
 		e->accept();
 		return;
 	case Qt::Key_L:
-		Filer::getInstance()->getRightTabPane()->getView()->setFocus();
+		Filer::getInstance()->getRightTabPane()->getCurrentView()->setFocus();
 		e->accept();
 		return;
 	case Qt::Key_T://ContextMenu
@@ -293,6 +317,9 @@ void TabContentView::setPath(const QString& dirPath)
 {
 	this->clearSelection();
 	_folderModel->setRootPath(dirPath);
+
+	//ƒ^ƒuŠÇ—ŽÒ‚É’Ê’m
+	_multiTabPane->onRootPathChanged(this, dirPath);
 }
 
 void TabContentView::directoryLoaded(const QString &path)

@@ -16,10 +16,22 @@ public:
 
 	void flush();
 
-	QSize getWindowSize() const {return _windowSize;}
+	QSize getWindowSize() const { return _windowSize; }
 	void setWindowSize(const QSize& size) { _windowSize = size; }
 
-	QColor getColorSetting(const QString& colorSettingType);
+	QColor getColorSetting(const QString& colorSettingType) const;
+
+	int getLeftTabCurrentIndex() const { return _leftTabCurrentIndex; }
+	void setLeftTabCurrnetIndex(int i) { _leftTabCurrentIndex = i; }
+
+	int getRightTabCurrentIndex() const { return _rightTabCurrentIndex; }
+	void setRightTabCurrnetIndex(int i) { _rightTabCurrentIndex = i; }
+
+	QStringList getLeftTabs() const { return _leftTabs; }
+	void setLeftTabs(const QStringList& list) { _leftTabs = list; }
+
+	QStringList getRightTabs() const { return _rightTabs; }
+	void setRightTabs(const QStringList& list) { _rightTabs = list; }
 
 private:
 	void initialize();
@@ -27,6 +39,10 @@ private:
 private:
 	static Settings* s_instance;
 	QSize _windowSize;
+	int _leftTabCurrentIndex;
+	int _rightTabCurrentIndex;
+	QStringList _leftTabs;
+	QStringList _rightTabs;
 
 	const QMap<QString, QColor> _colorSettings =
 	{

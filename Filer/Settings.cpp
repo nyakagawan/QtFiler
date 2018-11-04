@@ -4,6 +4,10 @@
 namespace
 {
 	const char* KeyWindowSize = "windowSize";
+	const char* KeyLeftTabCurrentIndex = "leftTabCurrentIndex";
+	const char* KeyRightTabCurrentIndex = "rightTabCurrentIndex";
+	const char* KeyLeftTabs = "leftTabs";
+	const char* KeyRightTabs = "rightTabs";
 }
 
 Settings* Settings::s_instance = nullptr;
@@ -35,15 +39,22 @@ Settings::~Settings()
 void Settings::flush()
 {
 	setValue(KeyWindowSize, _windowSize);
+	setValue(KeyLeftTabCurrentIndex, _leftTabCurrentIndex);
+	setValue(KeyRightTabCurrentIndex, _rightTabCurrentIndex);
+	setValue(KeyLeftTabs, _leftTabs);
+	setValue(KeyRightTabs, _rightTabs);
 }
 
 void Settings::initialize()
 {
 	_windowSize = value(KeyWindowSize, _windowSize).toSize();
-	qDebug() << KeyWindowSize << ": " << _windowSize;
+	_leftTabCurrentIndex = value(KeyLeftTabCurrentIndex, _leftTabCurrentIndex).toInt();
+	_rightTabCurrentIndex = value(KeyRightTabCurrentIndex, _rightTabCurrentIndex).toInt();
+	_leftTabs = value(KeyLeftTabs, _leftTabs).toStringList();
+	_rightTabs = value(KeyRightTabs, _rightTabs).toStringList();
 }
 
-QColor Settings::getColorSetting(const QString& colorSettingType)
+QColor Settings::getColorSetting(const QString& colorSettingType) const
 {
 	QColor ret;
 

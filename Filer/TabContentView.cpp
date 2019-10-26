@@ -6,11 +6,11 @@
 #include "FolderViewStyledItemDelegate.h"
 #include "FolderModel.h"
 #include "Settings.h"
+#include "ListSelectDialog.h"
 
-TabContentView::TabContentView(EventFilterHandler eventFilter, QWidget *parent)
+TabContentView::TabContentView(QWidget *parent)
 	: QTableView(parent)
 	, _folderModel(new FolderModel(this))
-	, _eventFilter(eventFilter)
 	,_multiTabPane(qobject_cast<MultiTabPane*>(parent))
 {
 	Q_ASSERT(_multiTabPane != nullptr);
@@ -23,8 +23,6 @@ TabContentView::TabContentView(EventFilterHandler eventFilter, QWidget *parent)
 	_folderModel->setDynamicSortFilter(true);
 	_folderModel->setSortLocaleAware(true);
 	setModel(_folderModel);
-
-	installEventFilter(_multiTabPane);
 
 	{
 		QMap<ColorRoleType, QColor> colors;
@@ -145,6 +143,19 @@ void TabContentView::keyPressEvent(QKeyEvent *e)
 		{
 			qApp->postEvent(this, new QKeyEvent(QEvent::Type::KeyPress, Qt::Key_PageDown, Qt::KeyboardModifier::NoModifier));
 		}
+		else if(e->modifiers() == Qt::KeyboardModifier::NoModifier)
+		{
+			//ドライブ変更
+			auto* dialog = new DriveSelectListDialog(this, getPath());
+			qDebug() << "dialog 1";
+			if (dialog->exec() == QDialog::Accepted)
+			{
+				qDebug() << "dialog Accepted: " << dialog->getRootPath();
+				setPath(dialog->getRootPath());
+			}
+			qDebug() << "dialog 2";
+			delete dialog;
+		}
 		return;
 	case Qt::Key_PageUp:
 	case Qt::Key_PageDown:
@@ -223,6 +234,7 @@ void TabContentView::keyPressEvent(QKeyEvent *e)
 		break;
 	}
 
+#if 0
 	if (e->modifiers() & Qt::ShiftModifier && !e->text().isEmpty())
 	{
 		QString text = e->text();
@@ -245,6 +257,9 @@ void TabContentView::keyPressEvent(QKeyEvent *e)
 
 		return;
 	}
+#else
+	//イクリメンタルサーチはそのモードに入っているときだけ
+#endif
 
 	e->ignore();
 }

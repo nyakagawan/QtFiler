@@ -121,6 +121,7 @@
     </QtRcc>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DriveSelectView.cpp" />
     <ClCompile Include="Filer.cpp">
       <OutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName)\%(Filename).moc</OutputFile>
       <DynamicSource Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">input</DynamicSource>
@@ -133,6 +134,7 @@
     </ClCompile>
     <ClCompile Include="FolderModel.cpp" />
     <ClCompile Include="FolderViewStyledItemDelegate.cpp" />
+    <ClCompile Include="ListSelectDialog.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MultiTabPane.cpp" />
     <ClCompile Include="Settings.cpp" />
@@ -168,7 +170,12 @@
       <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName)\.;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets</IncludePath>
       <Define Condition="'$(Configuration)|$(Platform)'=='Release|x64'">UNICODE;_UNICODE;WIN32;WIN64;QT_DLL;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_GUI_LIB;QT_WIDGETS_LIB</Define>
     </QtMoc>
+    <QtMoc Include="DriveSelectView.h">
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets</IncludePath>
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets</IncludePath>
+    </QtMoc>
     <ClInclude Include="FolderViewStyledItemDelegate.h" />
+    <ClInclude Include="ListSelectDialog.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="WindowsContextMenu.h" />
     <QtMoc Include="Filer.h" />
@@ -176,6 +183,7 @@
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="Filer.ui" />
+    <QtUic Include="ListSelectDialog.ui" />
     <QtUic Include="MultiTabPane.ui" />
     <QtUic Include="TabContentView.ui" />
   </ItemGroup>

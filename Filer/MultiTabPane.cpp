@@ -43,9 +43,8 @@ void MultiTabPane::setCurrentTabIndex(int index)
 
 void MultiTabPane::addTab(const QString& path)
 {
-	auto tabContentView = new TabContentView(
-		std::bind(&MultiTabPane::eventFilter, this, std::placeholders::_1, std::placeholders::_2),
-		this);
+	auto tabContentView = new TabContentView(this);
+	_tabWidget->installEventFilter(this);
 	_tabWidget->addTab(tabContentView, "");
 	tabContentView->setPath(path);
 }

@@ -118,13 +118,13 @@ private:
 	void emitFileRenamed(const QString &path, const QString &oldName, const QString &newName);
 	void emitDirectoryLoaded(const QString &path);
 
-	int m_sortColumn;
-	SortDirsType m_sortDirsType;
-	bool m_sortDotFirst;
-	Qt::SortOrder m_sortOrder;
+	int _sortColumn;
+	SortDirsType _sortDirsType;
+	bool _sortDotFirst;
+	Qt::SortOrder _sortOrder;
 
-	QFont m_font;
-	QMap<ColorRoleType, QBrush> m_brushes;
+	QFont _font;
+	QMap<ColorRoleType, QBrush> _brushes;
 
-	QItemSelectionModel* m_selectionModel;
+	QItemSelectionModel* _selectionModel;
 };

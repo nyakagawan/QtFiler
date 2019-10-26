@@ -54,6 +54,15 @@
     <ClCompile Include="FolderViewStyledItemDelegate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FolderModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ListSelectDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DriveSelectView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -63,6 +72,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FolderViewStyledItemDelegate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ListSelectDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -79,6 +94,12 @@
     <QtMoc Include="Settings.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="FolderModel.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="DriveSelectView.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="Filer.ui">
@@ -88,6 +109,9 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="MultiTabPane.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="ListSelectDialog.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>

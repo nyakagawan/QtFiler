@@ -10,11 +10,11 @@
 
 FolderModel::FolderModel(QObject *parent/* = Q_NULLPTR*/) :
 	QSortFilterProxyModel(parent),
-	m_sortColumn(0),
-	m_sortDirsType(SortDirsType::NoSpecify),
-	m_sortDotFirst(true),
-	m_sortOrder(Qt::AscendingOrder),
-	m_selectionModel(new QItemSelectionModel(this))
+	_sortColumn(0),
+	_sortDirsType(SortDirsType::NoSpecify),
+	_sortDotFirst(true),
+	_sortOrder(Qt::AscendingOrder),
+	_selectionModel(new QItemSelectionModel(this))
 {
 	setSortCaseSensitivity(Qt::CaseInsensitive);
 
@@ -36,7 +36,7 @@ FolderModel::FolderModel(QObject *parent/* = Q_NULLPTR*/) :
 
 FolderModel::~FolderModel()
 {
-	delete m_selectionModel;
+	delete _selectionModel;
 }
 
 void FolderModel::onRootPathChanged(const QString &newPath)
@@ -68,47 +68,47 @@ void FolderModel::setSortSectionType(SectionType sectionType)
 
 SectionType FolderModel::sortSectionType() const
 {
-	return getSectionTypeFromColumn(m_sortColumn);
+	return getSectionTypeFromColumn(_sortColumn);
 }
 
 void FolderModel::setSortColumn(int column)
 {
-	m_sortColumn = column;
+	_sortColumn = column;
 }
 
 int FolderModel::sortColumn() const
 {
-	return m_sortColumn;
+	return _sortColumn;
 }
 
 void FolderModel::setSortDirsType(SortDirsType dirsType)
 {
-	m_sortDirsType = dirsType;
+	_sortDirsType = dirsType;
 }
 
 SortDirsType FolderModel::sortDirsType() const
 {
-	return m_sortDirsType;
+	return _sortDirsType;
 }
 
 void FolderModel::setSortDotFirst(bool dotFirst)
 {
-	m_sortDotFirst = dotFirst;
+	_sortDotFirst = dotFirst;
 }
 
 bool FolderModel::sortDotFirst() const
 {
-	return m_sortDotFirst;
+	return _sortDotFirst;
 }
 
 void FolderModel::setSortOrder(Qt::SortOrder order)
 {
-	m_sortOrder = order;
+	_sortOrder = order;
 }
 
 Qt::SortOrder FolderModel::sortOrder() const
 {
-	return m_sortOrder;
+	return _sortOrder;
 }
 
 int FolderModel::columnCount(const QModelIndex& parent) const
@@ -192,16 +192,16 @@ QVariant FolderModel::data(const QModelIndex &modelIndex, int role) const
 		break;
 	}
 	case Qt::FontRole:
-		return m_font;
+		return _font;
 
 	case Qt::TextAlignmentRole:
 		if (sectionType == SectionType::FileSize || sectionType == SectionType::LastModified)
 		{
-			ret = Qt::AlignRight;
+			return QVariant(Qt::AlignRight | Qt::AlignVCenter);
 		}
 		else
 		{
-			ret = Qt::AlignLeft;
+			return QVariant(Qt::AlignLeft | Qt::AlignVCenter);
 		}
 
 		break;
@@ -288,8 +288,8 @@ QVariant FolderModel::headerData(int section, Qt::Orientation orientation, int r
 
 void FolderModel::sort(int column, Qt::SortOrder order/* = Qt::AscendingOrder*/)
 {
-	m_sortColumn = column;
-	m_sortOrder = order;
+	_sortColumn = column;
+	_sortOrder = order;
 
 	refresh();
 }
@@ -298,21 +298,21 @@ void FolderModel::refresh()
 {
 	bool backup = dynamicSortFilter();
 	setDynamicSortFilter(false);
-	QSortFilterProxyModel::sort(m_sortColumn, m_sortOrder);
+	QSortFilterProxyModel::sort(_sortColumn, _sortOrder);
 	setDynamicSortFilter(backup);
 }
 
 QItemSelectionModel* FolderModel::getSelectionModel()
 {
-	return m_selectionModel;
+	return _selectionModel;
 }
 
 void FolderModel::setSelect(int row, QItemSelectionModel::SelectionFlags selectionFlags, const QModelIndex &parentIndex)
 {
-	if (m_selectionModel != Q_NULLPTR)
+	if (_selectionModel != Q_NULLPTR)
 	{
 		QItemSelection selection(index(row, 0, parentIndex), index(row, columnCount() - 1, parentIndex));
-		m_selectionModel->select(selection, selectionFlags);
+		_selectionModel->select(selection, selectionFlags);
 	}
 }
 
@@ -320,9 +320,9 @@ QModelIndexList FolderModel::getSelectedIndexList()
 {
 	QModelIndexList indexList;
 
-	if (m_selectionModel != Q_NULLPTR)
+	if (_selectionModel != Q_NULLPTR)
 	{
-		indexList = m_selectionModel->selectedRows();
+		indexList = _selectionModel->selectedRows();
 	}
 
 	return indexList;
@@ -330,9 +330,9 @@ QModelIndexList FolderModel::getSelectedIndexList()
 
 void FolderModel::clearSelected()
 {
-	if (m_selectionModel != Q_NULLPTR)
+	if (_selectionModel != Q_NULLPTR)
 	{
-		m_selectionModel->clear();
+		_selectionModel->clear();
 	}
 }
 
@@ -342,9 +342,9 @@ bool FolderModel::lessThan(const QModelIndex &source_left, const QModelIndex &so
 
 	QFileInfo l_info = fsModel->fileInfo(source_left);
 	QFileInfo r_info = fsModel->fileInfo(source_right);
-	bool ascOrder = (m_sortOrder == Qt::AscendingOrder);
+	bool ascOrder = (_sortOrder == Qt::AscendingOrder);
 
-	if (m_sortDotFirst)
+	if (_sortDotFirst)
 	{
 		if (l_info.fileName() == ".")
 		{
@@ -364,7 +364,7 @@ bool FolderModel::lessThan(const QModelIndex &source_left, const QModelIndex &so
 		}
 	}
 
-	if (m_sortDirsType == SortDirsType::First)
+	if (_sortDirsType == SortDirsType::First)
 	{
 		if (!l_info.isDir() && r_info.isDir())
 		{
@@ -375,7 +375,7 @@ bool FolderModel::lessThan(const QModelIndex &source_left, const QModelIndex &so
 			return ascOrder;
 		}
 	}
-	else if (m_sortDirsType == SortDirsType::Last)
+	else if (_sortDirsType == SortDirsType::Last)
 	{
 		if (!l_info.isDir() && r_info.isDir())
 		{
@@ -387,7 +387,7 @@ bool FolderModel::lessThan(const QModelIndex &source_left, const QModelIndex &so
 		}
 	}
 
-	SectionType sortSectionType = getSectionTypeFromColumn(m_sortColumn);
+	SectionType sortSectionType = getSectionTypeFromColumn(_sortColumn);
 
 	if (sortSectionType == SectionType::FileSize)
 	{
@@ -573,8 +573,8 @@ QBrush FolderModel::getBrush(ColorRoleType colorRole) const
 {
 	QBrush ret;
 
-	QMap<ColorRoleType, QBrush>::const_iterator itr = m_brushes.find(colorRole);
-	if (itr != m_brushes.end())
+	QMap<ColorRoleType, QBrush>::const_iterator itr = _brushes.find(colorRole);
+	if (itr != _brushes.end())
 	{
 		ret = *itr;
 	}
@@ -584,24 +584,24 @@ QBrush FolderModel::getBrush(ColorRoleType colorRole) const
 
 void FolderModel::setFont(const QFont& font)
 {
-	m_font = font;
+	_font = font;
 }
 
 void FolderModel::initBrushes(const QMap<ColorRoleType, QColor>& colors)
 {
-	m_brushes.clear();
+	_brushes.clear();
 
 	for (auto colorRole : colors.keys())
 	{
-		m_brushes[colorRole] = QBrush(colors[colorRole]);
+		_brushes[colorRole] = QBrush(colors[colorRole]);
 	}
 }
 
 bool FolderModel::isSelected(const QModelIndex& index) const
 {
-	if (m_selectionModel != Q_NULLPTR)
+	if (_selectionModel != Q_NULLPTR)
 	{
-		return m_selectionModel->isSelected(index);
+		return _selectionModel->isSelected(index);
 	}
 
 	return false;

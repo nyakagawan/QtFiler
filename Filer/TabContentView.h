@@ -12,9 +12,7 @@ class TabContentView : public QTableView
 	Q_OBJECT
 
 public:
-	typedef std::function<bool(QObject*, QEvent*)> EventFilterHandler;
-public:
-	TabContentView(EventFilterHandler eventFilter, QWidget *parent = Q_NULLPTR);
+	TabContentView(QWidget *parent = Q_NULLPTR);
 	~TabContentView();
 
 	QItemSelectionModel::SelectionFlags selectionCommand(const QModelIndex &index, const QEvent *e = Q_NULLPTR) const Q_DECL_OVERRIDE;
@@ -42,7 +40,6 @@ private:
 	Ui::TabContentView _ui;
 	MultiTabPane* _multiTabPane;
 	FolderModel *_folderModel;
-	EventFilterHandler _eventFilter;
 	//各RootPathのカーソル位置
 	QMap<QString, int> _rootPathToCursorRow;
 };

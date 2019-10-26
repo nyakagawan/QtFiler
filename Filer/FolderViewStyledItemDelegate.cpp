@@ -6,7 +6,7 @@
 #include <QDebug>
 #include <QPainter>
 #include <QApplication>
-#include "TabContentView.h"
+#include <QAbstractItemView>
 #include "settings.h"
 
 FolderViewStyledItemDelegate::FolderViewStyledItemDelegate(QObject *parent/* = Q_NULLPTR*/)
@@ -22,7 +22,7 @@ void FolderViewStyledItemDelegate::paint(QPainter *painter, const QStyleOptionVi
 
 	QStyledItemDelegate::paint(painter, opt, index);
 
-	auto parent = qobject_cast<TabContentView*>(this->parent());
+	auto parent = qobject_cast<QAbstractItemView*>(this->parent());
 	if (parent != Q_NULLPTR)
 	{
 		if (parent->currentIndex().row() == index.row())

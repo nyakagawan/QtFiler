@@ -166,7 +166,8 @@ DriveListModel::SectionType DriveListModel::getSectionTypeFromColumn(int column)
 //=============================================================================
 //=============================================================================
 DriveSelectView::DriveSelectView(QWidget *parent, QString currentPath)
-	:_pDriveListModel(new DriveListModel(this))
+	:QTableView(parent)
+	,_pDriveListModel(new DriveListModel(this))
 {
 	setItemDelegate(new FolderViewStyledItemDelegate(this));
 

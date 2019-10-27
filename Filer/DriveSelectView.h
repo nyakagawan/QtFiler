@@ -26,7 +26,8 @@ public:
 	QVariant data(const QModelIndex &modelIndex, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
 	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
 
-	int findContainRow(const QString& path) const;
+	int findContainRow(const QString& path, Qt::CaseSensitivity cs = Qt::CaseSensitive) const;
+	int findHeadCharRow(const QChar headChar) const;
 	QString getRootPath(int row) const;
 
 private:

@@ -116,17 +116,30 @@ QVariant DriveListModel::headerData(int section, Qt::Orientation orientation, in
 	}
 }
 
-int DriveListModel::findContainRow(const QString& path) const
+int DriveListModel::findContainRow(const QString& path, Qt::CaseSensitivity cs/* = Qt::CaseSensitive*/) const
 {
 	for (int i = 0; i < _driveList.count(); ++i)
 	{
-		if (path.startsWith(_driveList[i].rootPath()))
+		if (path.startsWith(_driveList[i].rootPath(), cs))
 		{
 			return i;
 		}
 	}
 	return -1;
 }
+
+int DriveListModel::findHeadCharRow(const QChar headChar) const
+{
+	for (int i = 0; i < _driveList.count(); ++i)
+	{
+		if(_driveList[i].rootPath()[0].toLower() == headChar.toLower())
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
 
 QString DriveListModel::getRootPath(int row) const
 {
@@ -187,26 +200,35 @@ QString DriveSelectView::getRootPath()
 
 void DriveSelectView::keyPressEvent(QKeyEvent *e)
 {
+	if (e->modifiers() == Qt::KeyboardModifier::NoModifier && e->key() >= Qt::Key_A && e->key() <= Qt::Key_Z)
+	{
+		//AlphabetKey‚ª‘Å‚½‚ê‚½ê‡‚ÍA‚»‚ê‚ª“ª•¶Žš‚ÌDrive‚ð‘I‘ð‚·‚é
+		//qDebug() << e->text();
+		int row = _pDriveListModel->findHeadCharRow(e->text()[0]);
+		if (row >= 0)
+		{
+			setCursor(_pDriveListModel->index(row, 0));
+			e->accept();
+			return;
+		}
+	}
 	switch (e->key())
 	{
-	case Qt::Key_K:
 	case Qt::Key_Up:
-		qDebug() << "ListSelectDialog::keyPressEvent up";
+		//qDebug() << "ListSelectDialog::keyPressEvent up";
 		listCursorUp();
 		e->accept();
 		return;
-	case Qt::Key_J:
 	case Qt::Key_Down:
-		qDebug() << "ListSelectDialog::keyPressEvent down";
+		//qDebug() << "ListSelectDialog::keyPressEvent down";
 		listCursorDown();
 		e->accept();
 		return;
 	default:
-		qDebug() << "ListSelectDialog::keyPressEvent other";
+		//qDebug() << "ListSelectDialog::keyPressEvent other";
 		break;
 	}
 	e->ignore();
-
 }
 
 void DriveSelectView::setCursor(const QModelIndex& index)

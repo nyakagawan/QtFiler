@@ -44,7 +44,8 @@ void MultiTabPane::setCurrentTabIndex(int index)
 void MultiTabPane::addTab(const QString& path)
 {
 	auto tabContentView = new TabContentView(this);
-	_tabWidget->installEventFilter(this);
+	tabContentView->installEventFilter(this);
+	//_tabWidget->installEventFilter(this);
 	_tabWidget->addTab(tabContentView, "");
 	tabContentView->setPath(path);
 }
@@ -69,7 +70,7 @@ bool MultiTabPane::eventFilter(QObject *obj, QEvent *event)
 	if (event->type() == QEvent::KeyPress)
 	{
 		QKeyEvent *e = static_cast<QKeyEvent *>(event);
-		//qDebug("Ate key press %d", keyEvent->key());
+		//qDebug("Ate key press %d", e->key());
 		switch (e->key())
 		{
 		case Qt::Key_J:

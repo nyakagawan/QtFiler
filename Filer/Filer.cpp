@@ -4,7 +4,9 @@
 #include "MultiTabPane.h"
 #include "Settings.h"
 
+static const int HOTKEY_EVENT_ID = 100;
 Filer* Filer::_pInstance = nullptr;
+Filer::EventFilter Filer::_globalShortcutEvent;
 
 namespace
 {
@@ -46,6 +48,25 @@ Filer::Filer(QWidget *parent)
 	auto settings = Settings::getInstance();
 	qDebug() << settings->getWindowSize();
 	resize(settings->getWindowSize());
+
+	initializeGlobalShortcutEvent();
+}
+
+void Filer::initializeGlobalShortcutEvent()
+{
+	qApp->installNativeEventFilter(&_globalShortcutEvent);
+	HWND hwnd = (HWND)winId();
+	//qDebug() << hwnd;
+	auto result = ::RegisterHotKey(
+		hwnd,
+		HOTKEY_EVENT_ID,
+		MOD_CONTROL/* | MOD_ALT | MOD_SHIFT*/,
+		//https://docs.microsoft.com/ja-jp/windows/win32/inputdev/virtual-key-codes?redirectedfrom=MSDN
+		0x32/*2*/);
+	if (!result)
+	{
+		QMessageBox::warning(this, "Warning", QString("Failed to register hot key %1").arg(GetLastError()));
+	}
 }
 
 void Filer::showEvent(QShowEvent *event)
@@ -53,12 +74,12 @@ void Filer::showEvent(QShowEvent *event)
 	qDebug() << "showEvent";
 
 	qDebug() << " splitter_h->sizes";
-	for each (auto size in ui.splitter_h->sizes())
+	for(auto size : ui.splitter_h->sizes())
 	{
 		qDebug() << size;
 	}
 	qDebug() << " splitter_v->sizes";
-	for each (auto size in ui.splitter_v->sizes())
+	for(auto size : ui.splitter_v->sizes())
 	{
 		qDebug() << size;
 	}
@@ -92,5 +113,31 @@ void Filer::closeEvent(QCloseEvent * event)
 	}
 	settings->flush();
 
+	::UnregisterHotKey(HWND(winId()), HOTKEY_EVENT_ID);
+
 	QWidget::closeEvent(event);//super class
+}
+
+bool Filer::EventFilter::nativeEventFilter(const QByteArray& eventType, void* message, long* result)
+{
+	Q_UNUSED(eventType)
+	Q_UNUSED(result)
+	// Transform the message pointer to the MSG WinAPI
+	MSG* msg = reinterpret_cast<MSG*>(message);
+
+	//qDebug() << msg->message;
+
+	// If the message is a HotKey, then ...
+	if (msg->message == WM_HOTKEY)
+	{
+		// ... check HotKey
+		if (msg->wParam == HOTKEY_EVENT_ID)
+		{
+			// We inform about this to the console
+			//qDebug() << "HotKey worked";
+			Filer::getInstance()->activateWindow();
+			return true;
+		}
+	}
+	return false;
 }

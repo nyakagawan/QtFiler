@@ -26,6 +26,7 @@ public:
 
 private:
 	bool eventFilter(QObject *obj, QEvent *event);
+	void setCurrentTabPathText(const QString& path);
 
 private:
 	Ui::MultiTabPane ui;

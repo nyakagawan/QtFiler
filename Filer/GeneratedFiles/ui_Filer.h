@@ -38,9 +38,10 @@ public:
             FilerClass->setObjectName(QStringLiteral("FilerClass"));
         FilerClass->resize(772, 420);
         verticalLayout = new QVBoxLayout(FilerClass);
-        verticalLayout->setSpacing(6);
+        verticalLayout->setSpacing(4);
         verticalLayout->setContentsMargins(11, 11, 11, 11);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
+        verticalLayout->setContentsMargins(4, 4, 4, 4);
         splitter_v = new QSplitter(FilerClass);
         splitter_v->setObjectName(QStringLiteral("splitter_v"));
         QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);

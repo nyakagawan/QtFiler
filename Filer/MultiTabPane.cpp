@@ -11,7 +11,8 @@ MultiTabPane::MultiTabPane(QWidget *parent)
 	_tabWidget = new QTabWidget(this);
 	ui.verticalLayout_center->addWidget(_tabWidget);
 
-	//ui.lineEdit_bottom
+	ui.lineEdit_top->setReadOnly(true);
+	ui.lineEdit_bottom->setReadOnly(true);
 }
 
 MultiTabPane::~MultiTabPane()
@@ -39,6 +40,7 @@ void MultiTabPane::setCurrentTabIndex(int index)
 		return;
 	}
 	_tabWidget->setCurrentIndex(index);
+	setCurrentTabPathText(getCurrentView()->getPath());
 }
 
 void MultiTabPane::addTab(const QString& path)
@@ -61,6 +63,7 @@ void MultiTabPane::onRootPathChanged(TabContentView* tabContentView, const QStri
 		tabName = path;
 	}
 	_tabWidget->setTabText(index, tabName);
+	setCurrentTabPathText(path);
 }
 
 bool MultiTabPane::eventFilter(QObject *obj, QEvent *event)
@@ -132,4 +135,9 @@ bool MultiTabPane::eventFilter(QObject *obj, QEvent *event)
 	}
 
 	return false;
+}
+
+void MultiTabPane::setCurrentTabPathText(const QString& path)
+{
+	ui.lineEdit_top->setText(path);
 }

@@ -16,6 +16,7 @@ TabContentView::TabContentView(QWidget *parent)
 	Q_ASSERT(_multiTabPane != nullptr);
 
 	_ui.setupUi(this);
+	verticalHeader()->setDefaultSectionSize(24);
 
 	setItemDelegate(new FolderViewStyledItemDelegate(this));
 
@@ -309,8 +310,10 @@ void TabContentView::goUpDirectory()
 	{
 		return;
 	}
-	auto path = _folderModel->filePath(index.parent());
-	setPath(path);
+	if (dir.cdUp())
+	{
+		setPath(dir.path());
+	}
 }
 
 void TabContentView::on_TabContentView_clicked(const QModelIndex &index)

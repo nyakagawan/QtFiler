@@ -29,13 +29,22 @@ public:
     {
         if (MultiTabPane->objectName().isEmpty())
             MultiTabPane->setObjectName(QStringLiteral("MultiTabPane"));
-        MultiTabPane->resize(400, 300);
+        MultiTabPane->resize(387, 348);
         verticalLayout = new QVBoxLayout(MultiTabPane);
-        verticalLayout->setSpacing(6);
+        verticalLayout->setSpacing(4);
         verticalLayout->setContentsMargins(11, 11, 11, 11);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
+        verticalLayout->setContentsMargins(4, 4, 4, 4);
         lineEdit_top = new QLineEdit(MultiTabPane);
         lineEdit_top->setObjectName(QStringLiteral("lineEdit_top"));
+        QFont font;
+        font.setFamily(QStringLiteral("Consolas"));
+        font.setPointSize(10);
+        lineEdit_top->setFont(font);
+        lineEdit_top->setFocusPolicy(Qt::NoFocus);
+        lineEdit_top->setAcceptDrops(false);
+        lineEdit_top->setAutoFillBackground(false);
+        lineEdit_top->setFrame(true);
         lineEdit_top->setReadOnly(true);
 
         verticalLayout->addWidget(lineEdit_top);

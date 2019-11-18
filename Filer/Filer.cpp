@@ -40,14 +40,20 @@ Filer::Filer(QWidget *parent)
 
 	ui.setupUi(this);
 
+	ui.splitter_v->setStretchFactor(0, 1);
+	ui.splitter_v->setStretchFactor(1, 0);//windowsƒŠƒTƒCƒY‚É‰º•”•ª‚ÍL‚Î‚³‚È‚¢
+
 	Settings::create();
 
 	_pLeftTabPane = SettingUpTabs(this, ui.verticalLayout_left, true);
 	_pRightTabPane = SettingUpTabs(this, ui.verticalLayout_right, false);
 
 	auto settings = Settings::getInstance();
-	qDebug() << settings->getWindowSize();
+	qDebug() << "getWindowSize: " << settings->getWindowSize();
 	resize(settings->getWindowSize());
+
+	qDebug() << "getBottomPaneSize: " << settings->getBottomPaneSize();
+	ui.splitter_v->setSizes(QList<int> { 1, settings->getBottomPaneSize().height() });
 
 	initializeGlobalShortcutEvent();
 }
@@ -91,6 +97,8 @@ void Filer::closeEvent(QCloseEvent * event)
 
 	auto settings = Settings::getInstance();
 	settings->setWindowSize(size());
+	settings->setBottomPaneSize(ui.verticalLayoutWidget_3->size());
+
 	{
 		QStringList tabs;
 		_pLeftTabPane->getTabs(tabs);

@@ -49,6 +49,7 @@ public:
         sizePolicy.setVerticalStretch(0);
         sizePolicy.setHeightForWidth(splitter_v->sizePolicy().hasHeightForWidth());
         splitter_v->setSizePolicy(sizePolicy);
+        splitter_v->setBaseSize(QSize(0, 0));
         splitter_v->setOrientation(Qt::Vertical);
         splitter_h = new QSplitter(splitter_v);
         splitter_h->setObjectName(QStringLiteral("splitter_h"));
@@ -56,7 +57,7 @@ public:
         verticalLayoutWidget = new QWidget(splitter_h);
         verticalLayoutWidget->setObjectName(QStringLiteral("verticalLayoutWidget"));
         verticalLayout_left = new QVBoxLayout(verticalLayoutWidget);
-        verticalLayout_left->setSpacing(6);
+        verticalLayout_left->setSpacing(0);
         verticalLayout_left->setContentsMargins(11, 11, 11, 11);
         verticalLayout_left->setObjectName(QStringLiteral("verticalLayout_left"));
         verticalLayout_left->setSizeConstraint(QLayout::SetDefaultConstraint);
@@ -65,7 +66,7 @@ public:
         verticalLayoutWidget_2 = new QWidget(splitter_h);
         verticalLayoutWidget_2->setObjectName(QStringLiteral("verticalLayoutWidget_2"));
         verticalLayout_right = new QVBoxLayout(verticalLayoutWidget_2);
-        verticalLayout_right->setSpacing(6);
+        verticalLayout_right->setSpacing(0);
         verticalLayout_right->setContentsMargins(11, 11, 11, 11);
         verticalLayout_right->setObjectName(QStringLiteral("verticalLayout_right"));
         verticalLayout_right->setContentsMargins(0, 0, 0, 0);
@@ -77,10 +78,12 @@ public:
         verticalLayout_bottom->setSpacing(6);
         verticalLayout_bottom->setContentsMargins(11, 11, 11, 11);
         verticalLayout_bottom->setObjectName(QStringLiteral("verticalLayout_bottom"));
-        verticalLayout_bottom->setSizeConstraint(QLayout::SetDefaultConstraint);
+        verticalLayout_bottom->setSizeConstraint(QLayout::SetNoConstraint);
         verticalLayout_bottom->setContentsMargins(0, 0, 0, 0);
         textBrowser = new QTextBrowser(verticalLayoutWidget_3);
         textBrowser->setObjectName(QStringLiteral("textBrowser"));
+        sizePolicy.setHeightForWidth(textBrowser->sizePolicy().hasHeightForWidth());
+        textBrowser->setSizePolicy(sizePolicy);
 
         verticalLayout_bottom->addWidget(textBrowser);
 

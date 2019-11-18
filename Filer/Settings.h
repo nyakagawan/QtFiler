@@ -19,6 +19,15 @@ public:
 	QSize getWindowSize() const { return _windowSize; }
 	void setWindowSize(const QSize& size) { _windowSize = size; }
 
+	QSize getBottomPaneSize() const
+	{
+		return _bottomPaneSize;
+	}
+	void setBottomPaneSize(const QSize& size)
+	{
+		_bottomPaneSize = size;
+	}
+
 	QColor getColorSetting(const QString& colorSettingType) const;
 
 	int getLeftTabCurrentIndex() const { return _leftTabCurrentIndex; }
@@ -39,6 +48,7 @@ private:
 private:
 	static Settings* s_instance;
 	QSize _windowSize;
+	QSize _bottomPaneSize;
 	int _leftTabCurrentIndex;
 	int _rightTabCurrentIndex;
 	QStringList _leftTabs;
@@ -61,7 +71,7 @@ private:
 		{ "folderView_selected_background", "#b2d7ff", },
 
 		{ "folderView_cursor",              "#0000ff", },
-		{ "folderView_cursor_inactive",     "#cccccc", },
+		{ "folderView_cursor_inactive",     "#ccccff", },
 
 		{ "folderPath_text",                "#000000", },
 		{ "folderPath_background",          "#ffffff", },

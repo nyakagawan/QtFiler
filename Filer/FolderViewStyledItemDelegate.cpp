@@ -23,19 +23,28 @@ void FolderViewStyledItemDelegate::paint(QPainter *painter, const QStyleOptionVi
 	QStyledItemDelegate::paint(painter, opt, index);
 
 	auto parent = qobject_cast<QAbstractItemView*>(this->parent());
-	if (parent != Q_NULLPTR)
+	if (parent != Q_NULLPTR && parent->currentIndex().row() == index.row())
 	{
-		if (parent->currentIndex().row() == index.row())
+		// カーソル位置をアンダーラインで表示
+		painter->save();
+		QColor color = (option.state & QStyle::State_Active) ? QColor("#0000ff") : QColor("#ccccff");
+		int width = 3;
+		QPen pen(color, static_cast<qreal>(width));
+		painter->setPen(pen);
+
+		const QRect rect(option.rect);
+		painter->drawLine(rect.topLeft(), rect.topRight());
+		painter->drawLine(rect.bottomLeft(), rect.bottomRight());
+
+		if (index.column() == 0)
 		{
-			// カーソル位置をアンダーラインで表示
-			painter->save();
-			QColor color = (option.state & QStyle::State_Active) ? QColor("#0000ff") : QColor("#cccccc");
-			int width = 1;
-			QPen pen(color, static_cast<qreal>(width));
-			painter->setPen(pen);
-			painter->drawLine(option.rect.bottomLeft(), option.rect.bottomRight());
-			painter->restore();
+			painter->drawRect(QRect(rect.topLeft(), rect.bottomLeft()));
 		}
+		else if (index.column() == (parent->model()->columnCount() - 1))
+		{
+			painter->drawRect(QRect(rect.topRight(), rect.bottomRight()));
+		}
+		painter->restore();
 	}
 }
 

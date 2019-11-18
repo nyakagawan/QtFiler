@@ -111,6 +111,45 @@ QString TabContentView::getPath() const
 	return _folderModel->rootPath();
 }
 
+void TabContentView::incrementalSearch(const QString& searchFilename, int startOffset, int searchDir)
+{
+	auto fnSearch = [&]()
+	{
+		FolderModel* folderModel = qobject_cast<FolderModel*>(model());
+		int iRow = currentIndex().row();
+		int rowEnd = iRow;
+		iRow += startOffset;
+		int rowCount = model()->rowCount(currentIndex().parent());
+		qDebug() << "rowCount: " << rowCount << ", rowEnd" << rowEnd;
+		do
+		{
+			QModelIndex index = currentIndex().siblingAtRow(iRow);
+			QString fileName = folderModel->fileName(index);
+			//qDebug() << "fileName: " << fileName << ", iRow: " << iRow;
+			if (fileName.indexOf(searchFilename, 0, Qt::CaseInsensitive) >= 0)
+			{
+				qDebug() << "setCursor: " << index << ", iRow: " << iRow << ", fileName: " << fileName;
+				this->setCursor(index);
+				break;
+			}
+
+			iRow += searchDir;
+			if (iRow >= rowCount)
+			{
+				iRow = 0;
+			}
+			else if(iRow < 0)
+			{
+				iRow = rowCount - 1;
+			}
+		} while (iRow != rowEnd);
+	};
+
+	_isIncreamentalSearching = true;
+	fnSearch();
+	_isIncreamentalSearching = false;
+}
+
 void TabContentView::customContextMenuRequested(const QPoint &pos)
 {
 	auto index = this->indexAt(pos);
@@ -380,7 +419,11 @@ void TabContentView::currentChanged(const QModelIndex & current, const QModelInd
 	refresh(topLeft, bottomRight);
 
 	this->scrollTo(currentIndex());
-	setFocus();
+
+	if (!_isIncreamentalSearching)
+	{
+		setFocus();
+	}
 
 	//カーソル位置を記憶しておく
 	auto row = qMax(current.row(), 0);

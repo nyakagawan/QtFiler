@@ -3,6 +3,112 @@
 #include "TabContentView.h"
 #include "Settings.h"
 
+//-----------------------------------------------------------------------------
+// IncrementalSearchModule
+//-----------------------------------------------------------------------------
+IncrementalSearchModule::IncrementalSearchModule(MultiTabPane* pMultiTabPane, QLineEdit* pLineEdit)
+	:_pMultiTabPane(pMultiTabPane)
+	, _pLineEdit(pLineEdit)
+{
+	_pLineEdit->installEventFilter(this);
+}
+
+bool IncrementalSearchModule::eventFilter(QObject* obj, QEvent* event)
+{
+	if (!_pLineEdit)
+		return  false;
+
+	//qDebug() << "IncrementalSearchModule::eventFilter";
+	if (event->type() == QEvent::KeyPress)
+	{
+		QKeyEvent* e = static_cast<QKeyEvent*>(event);
+		//qDebug("Ate key press %d", e->key());
+		switch (e->key())
+		{
+		case Qt::Key_Escape:
+			//編集終了
+			finishIncrementalSearch();
+			return true;
+
+		case Qt::Key_Up:
+		case Qt::Key_Down:
+		{
+			const QString& searchText = _pLineEdit->text();
+			if (!searchText.isEmpty())
+			{
+				int searchDir = e->key() == Qt::Key_Up ? -1 : 1;
+				_pMultiTabPane->getCurrentView()->incrementalSearch(searchText, searchDir, searchDir);
+			}
+			return true;
+		}
+
+		default:
+			break;
+		}
+	}
+
+	return false;
+}
+
+void IncrementalSearchModule::startIncrementalSearch()
+{
+	_pLineEdit->setText("");
+	_pLineEdit->setReadOnly(false);
+	_pLineEdit->setFocus();
+
+	_connLineEditBottomTextChanged = connect(
+		_pLineEdit,
+		SIGNAL(textChanged(QString)),
+		this,
+		SLOT(lineEditBottomTextChanged(QString)));
+
+	_connLineEditBottomEditingFinished = connect(
+		_pLineEdit,
+		SIGNAL(editingFinished()),
+		this,
+		SLOT(lineEditBottomEditingFinished()));
+
+	_connLineEditBottomReturnPressed = connect(
+		_pLineEdit,
+		SIGNAL(returnPressed()),
+		this,
+		SLOT(lineEditBottomReturnPressed()));
+}
+
+void IncrementalSearchModule::finishIncrementalSearch()
+{
+	disconnect(_connLineEditBottomTextChanged);
+	disconnect(_connLineEditBottomEditingFinished);
+	disconnect(_connLineEditBottomReturnPressed);
+
+	QString text = _pLineEdit->text();
+
+	_pLineEdit->setText("");
+	_pLineEdit->setReadOnly(true);
+	_pMultiTabPane->getCurrentView()->setFocus();
+}
+
+void IncrementalSearchModule::lineEditBottomTextChanged(const QString& text)
+{
+	qDebug() << "lineEditBottomTextChanged: " << text;
+	_pMultiTabPane->getCurrentView()->incrementalSearch(text, 0, 1);
+}
+
+void IncrementalSearchModule::lineEditBottomEditingFinished()
+{
+	qDebug() << "lineEditBottomEditingFinished";
+	finishIncrementalSearch();
+}
+
+void IncrementalSearchModule::lineEditBottomReturnPressed()
+{
+	qDebug() << "lineEditBottomReturnPressed";
+	finishIncrementalSearch();
+}
+
+//-----------------------------------------------------------------------------
+// MultiTabPane
+//-----------------------------------------------------------------------------
 MultiTabPane::MultiTabPane(QWidget *parent)
 	: QWidget(parent)
 {
@@ -13,10 +119,13 @@ MultiTabPane::MultiTabPane(QWidget *parent)
 
 	ui.lineEdit_top->setReadOnly(true);
 	ui.lineEdit_bottom->setReadOnly(true);
+
+	_pIncrementalSearch = new IncrementalSearchModule(this, ui.lineEdit_bottom);
 }
 
 MultiTabPane::~MultiTabPane()
 {
+	delete _pIncrementalSearch;
 }
 
 TabContentView * MultiTabPane::getCurrentView()
@@ -47,7 +156,6 @@ void MultiTabPane::addTab(const QString& path)
 {
 	auto tabContentView = new TabContentView(this);
 	tabContentView->installEventFilter(this);
-	//_tabWidget->installEventFilter(this);
 	_tabWidget->addTab(tabContentView, "");
 	tabContentView->setPath(path);
 }
@@ -91,6 +199,7 @@ bool MultiTabPane::eventFilter(QObject *obj, QEvent *event)
 				}
 				return true;
 			}
+			break;
 		case Qt::Key_K:
 			if (e->modifiers() & Qt::ShiftModifier)
 			{
@@ -106,6 +215,7 @@ bool MultiTabPane::eventFilter(QObject *obj, QEvent *event)
 				}
 				return true;
 			}
+			break;
 		case Qt::Key_N:
 			if (e->modifiers() & Qt::ControlModifier)
 			{
@@ -118,6 +228,7 @@ bool MultiTabPane::eventFilter(QObject *obj, QEvent *event)
 				addTab(openPath);
 				return true;
 			}
+			break;
 		case Qt::Key_W:
 			if (e->modifiers() & Qt::ControlModifier)
 			{
@@ -129,6 +240,15 @@ bool MultiTabPane::eventFilter(QObject *obj, QEvent *event)
 				}
 				return true;
 			}
+			break;
+		case Qt::Key_F:
+			if (e->modifiers() == Qt::NoModifier)
+			{
+				//インクリメンタルサーチ開始
+				_pIncrementalSearch->startIncrementalSearch();
+				return true;
+			}
+			break;
 		default:
 			break;
 		}

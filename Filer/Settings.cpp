@@ -4,6 +4,7 @@
 namespace
 {
 	const char* KeyWindowSize = "windowSize";
+	const char* KeyBottomPaneSize = "bottomPaneSize";
 	const char* KeyLeftTabCurrentIndex = "leftTabCurrentIndex";
 	const char* KeyRightTabCurrentIndex = "rightTabCurrentIndex";
 	const char* KeyLeftTabs = "leftTabs";
@@ -39,6 +40,7 @@ Settings::~Settings()
 void Settings::flush()
 {
 	setValue(KeyWindowSize, _windowSize);
+	setValue(KeyBottomPaneSize, _bottomPaneSize);
 	setValue(KeyLeftTabCurrentIndex, _leftTabCurrentIndex);
 	setValue(KeyRightTabCurrentIndex, _rightTabCurrentIndex);
 	setValue(KeyLeftTabs, _leftTabs);
@@ -48,6 +50,7 @@ void Settings::flush()
 void Settings::initialize()
 {
 	_windowSize = value(KeyWindowSize, _windowSize).toSize();
+	_bottomPaneSize = value(KeyBottomPaneSize, _bottomPaneSize).toSize();
 	_leftTabCurrentIndex = value(KeyLeftTabCurrentIndex, _leftTabCurrentIndex).toInt();
 	_rightTabCurrentIndex = value(KeyRightTabCurrentIndex, _rightTabCurrentIndex).toInt();
 	_leftTabs = value(KeyLeftTabs, _leftTabs).toStringList();

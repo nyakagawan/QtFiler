@@ -21,6 +21,8 @@ public:
 	void refresh(const QModelIndex& topLeft, const QModelIndex& bottomRight);
 	void setPath(const QString &path);
 	QString getPath() const;
+	void incrementalSearch(const QString& searchFilename, int startOffset, int searchDir);
+	//void searchItem(const QString& searchFilename, QList<QModelIndex>& outIndexList);
 private:
 	void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
 	void setCursor(const QModelIndex& index);
@@ -37,9 +39,10 @@ private slots:
 	void customContextMenuRequested(const QPoint &pos);
 
 private:
-	Ui::TabContentView _ui;
-	MultiTabPane* _multiTabPane;
-	FolderModel *_folderModel;
+	Ui::TabContentView _ui = {};
+	MultiTabPane* _multiTabPane = {};
+	FolderModel* _folderModel = {};
 	//各RootPathのカーソル位置
-	QMap<QString, int> _rootPathToCursorRow;
+	QMap<QString, int> _rootPathToCursorRow = {};
+	bool _isIncreamentalSearching = false;
 };

@@ -31,10 +31,10 @@ public:
             MultiTabPane->setObjectName(QStringLiteral("MultiTabPane"));
         MultiTabPane->resize(387, 348);
         verticalLayout = new QVBoxLayout(MultiTabPane);
-        verticalLayout->setSpacing(4);
+        verticalLayout->setSpacing(0);
         verticalLayout->setContentsMargins(11, 11, 11, 11);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
-        verticalLayout->setContentsMargins(4, 4, 4, 4);
+        verticalLayout->setContentsMargins(0, 0, 0, 0);
         lineEdit_top = new QLineEdit(MultiTabPane);
         lineEdit_top->setObjectName(QStringLiteral("lineEdit_top"));
         QFont font;
@@ -57,6 +57,7 @@ public:
 
         lineEdit_bottom = new QLineEdit(MultiTabPane);
         lineEdit_bottom->setObjectName(QStringLiteral("lineEdit_bottom"));
+        lineEdit_bottom->setFont(font);
         lineEdit_bottom->setReadOnly(true);
 
         verticalLayout->addWidget(lineEdit_bottom);

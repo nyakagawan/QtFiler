@@ -6,37 +6,6 @@
 class TabContentView;
 class Settings;
 
-class IncrementalSearchModule : public QObject
-{
-	Q_OBJECT
-public:
-	IncrementalSearchModule(class MultiTabPane* pMultiTabPane, QLineEdit* pLineEdit);
-
-	bool eventFilter(QObject* obj, QEvent* event);
-
-	void startIncrementalSearch();
-
-	void finishIncrementalSearch();
-
-private Q_SLOTS:
-	void lineEditBottomTextChanged(const QString& text);
-
-	void lineEditBottomEditingFinished();
-
-	void lineEditBottomReturnPressed();
-
-private:
-	class MultiTabPane* _pMultiTabPane = {};
-	QLineEdit* _pLineEdit = {};
-
-	QMetaObject::Connection _connLineEditBottomTextChanged = {};
-	QMetaObject::Connection _connLineEditBottomEditingFinished = {};
-	QMetaObject::Connection _connLineEditBottomReturnPressed = {};
-
-	QList<QModelIndex> _matchingIndexList = {};
-};
-
-
 class MultiTabPane : public QWidget
 {
 	Q_OBJECT
@@ -62,6 +31,6 @@ private:
 private:
 	Ui::MultiTabPane ui = {};
 	QTabWidget *_tabWidget = {};
-	IncrementalSearchModule* _pIncrementalSearch = {};
+	class IncrementalSearchModule* _pIncrementalSearch = {};
 };
 

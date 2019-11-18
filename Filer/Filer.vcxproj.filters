@@ -63,6 +63,9 @@
     <ClCompile Include="DriveSelectView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="IncrementalSearchModule.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -98,6 +101,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="DriveSelectView.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="IncrementalSearchModule.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

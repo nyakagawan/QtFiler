@@ -134,6 +134,7 @@
     </ClCompile>
     <ClCompile Include="FolderModel.cpp" />
     <ClCompile Include="FolderViewStyledItemDelegate.cpp" />
+    <ClCompile Include="IncrementalSearchModule.cpp" />
     <ClCompile Include="ListSelectDialog.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MultiTabPane.cpp" />
@@ -175,6 +176,10 @@
       <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets</IncludePath>
     </QtMoc>
     <ClInclude Include="FolderViewStyledItemDelegate.h" />
+    <QtMoc Include="IncrementalSearchModule.h">
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets</IncludePath>
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets</IncludePath>
+    </QtMoc>
     <ClInclude Include="ListSelectDialog.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="WindowsContextMenu.h" />

@@ -370,13 +370,41 @@ void TabContentView::on_TabContentView_doubleClicked(const QModelIndex &index)
 	}
 }
 
-void TabContentView::setPath(const QString& dirPath)
+bool TabContentView::setPath(const QString& path)
 {
+	QFileInfo fi(path);
+	FolderModel* folderModel = qobject_cast<FolderModel*>(model());
+
+	QString dirPath{};
+	if (fi.isDir())
+	{
+		dirPath = path;
+	}
+	else
+	{
+		QDir dir(fi.dir());
+		if (!dir.exists())
+			return false;
+
+		dirPath = dir.absolutePath();
+	}
+
+	//qDebug() << "dirPath: " << dirPath;
+
 	this->clearSelection();
+
 	_folderModel->setRootPath(dirPath);
 
 	//タブ管理者に通知
 	_multiTabPane->onRootPathChanged(this, dirPath);
+
+	if (fi.isFile())
+	{
+		//ファイルの場合はカーソルを合わせる
+		setCursor(folderModel->index(path));
+	}
+
+	return true;
 }
 
 void TabContentView::directoryLoaded(const QString &path)

@@ -32,5 +32,6 @@ private:
 	Ui::MultiTabPane ui = {};
 	QTabWidget *_tabWidget = {};
 	class IncrementalSearchModule* _pIncrementalSearch = {};
+	class PathJumpModule* _pPathJump = {};
 };
 

@@ -66,6 +66,9 @@
     <ClCompile Include="IncrementalSearchModule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PathJumpModule.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -104,6 +107,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="IncrementalSearchModule.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="PathJumpModule.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

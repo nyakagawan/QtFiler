@@ -2,6 +2,7 @@
 #include "MultiTabPane.h"
 #include "TabContentView.h"
 #include "IncrementalSearchModule.h"
+#include "PathJumpModule.h"
 #include "Settings.h"
 
 //-----------------------------------------------------------------------------
@@ -19,11 +20,13 @@ MultiTabPane::MultiTabPane(QWidget *parent)
 	ui.lineEdit_bottom->setReadOnly(true);
 
 	_pIncrementalSearch = new IncrementalSearchModule(this, ui.lineEdit_bottom);
+	_pPathJump = new PathJumpModule(this, ui.lineEdit_bottom);
 }
 
 MultiTabPane::~MultiTabPane()
 {
 	delete _pIncrementalSearch;
+	delete _pPathJump;
 }
 
 TabContentView * MultiTabPane::getCurrentView()
@@ -83,9 +86,9 @@ bool MultiTabPane::eventFilter(QObject *obj, QEvent *event)
 		switch (e->key())
 		{
 		case Qt::Key_J:
-			if (e->modifiers() & Qt::ShiftModifier)
+			if (e->modifiers() & Qt::ControlModifier)
 			{
-				//Shift + J でタブ移動（左）
+				//Ctrl + J でタブ移動（左）
 				if (_tabWidget->currentIndex() >= 0 && _tabWidget->count() > 1)
 				{
 					auto newCurrentIndex = _tabWidget->currentIndex() - 1;
@@ -97,11 +100,17 @@ bool MultiTabPane::eventFilter(QObject *obj, QEvent *event)
 				}
 				return true;
 			}
-			break;
-		case Qt::Key_K:
 			if (e->modifiers() & Qt::ShiftModifier)
 			{
-				//Shift + K でタブ移動（右）
+				//Shift + J でパス指定ジャンプ
+				_pPathJump->startInput();
+				return true;
+			}
+			break;
+		case Qt::Key_K:
+			if (e->modifiers() & Qt::ControlModifier)
+			{
+				//Ctrl + K でタブ移動（右）
 				if (_tabWidget->currentIndex() >= 0 && _tabWidget->count() > 1)
 				{
 					auto newCurrentIndex = _tabWidget->currentIndex() + 1;

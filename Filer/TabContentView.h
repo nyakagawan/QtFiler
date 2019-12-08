@@ -19,10 +19,10 @@ public:
 	void setModel(FolderModel *folderModel);
 	void selectCurrent(QItemSelectionModel::SelectionFlag selectionFlag = QItemSelectionModel::Toggle);
 	void refresh(const QModelIndex& topLeft, const QModelIndex& bottomRight);
-	void setPath(const QString &path);
+	bool setPath(const QString &path);
 	QString getPath() const;
 	void incrementalSearch(const QString& searchFilename, int startOffset, int searchDir);
-	//void searchItem(const QString& searchFilename, QList<QModelIndex>& outIndexList);
+
 private:
 	void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
 	void setCursor(const QModelIndex& index);

@@ -28,7 +28,7 @@ bool IncrementalSearchModule::eventFilter(QObject* obj, QEvent* event)
 		{
 		case Qt::Key_Escape:
 			//•ÒWI—¹
-			finishIncrementalSearch();
+			finishInput();
 			return true;
 
 		case Qt::Key_Up:
@@ -51,7 +51,7 @@ bool IncrementalSearchModule::eventFilter(QObject* obj, QEvent* event)
 	return false;
 }
 
-void IncrementalSearchModule::startIncrementalSearch()
+void IncrementalSearchModule::startInput()
 {
 	_pLineEdit->setText("");
 	_pLineEdit->setReadOnly(false);
@@ -76,7 +76,7 @@ void IncrementalSearchModule::startIncrementalSearch()
 		SLOT(lineEditBottomReturnPressed()));
 }
 
-void IncrementalSearchModule::finishIncrementalSearch()
+void IncrementalSearchModule::finishInput()
 {
 	disconnect(_connLineEditBottomTextChanged);
 	disconnect(_connLineEditBottomEditingFinished);
@@ -98,12 +98,12 @@ void IncrementalSearchModule::lineEditBottomTextChanged(const QString& text)
 void IncrementalSearchModule::lineEditBottomEditingFinished()
 {
 	qDebug() << "lineEditBottomEditingFinished";
-	finishIncrementalSearch();
+	finishInput();
 }
 
 void IncrementalSearchModule::lineEditBottomReturnPressed()
 {
 	qDebug() << "lineEditBottomReturnPressed";
-	finishIncrementalSearch();
+	finishInput();
 }
 

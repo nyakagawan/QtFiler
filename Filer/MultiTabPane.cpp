@@ -143,7 +143,7 @@ bool MultiTabPane::eventFilter(QObject *obj, QEvent *event)
 			if (e->modifiers() == Qt::NoModifier)
 			{
 				//インクリメンタルサーチ開始
-				_pIncrementalSearch->startIncrementalSearch();
+				_pIncrementalSearch->startInput();
 				return true;
 			}
 			break;

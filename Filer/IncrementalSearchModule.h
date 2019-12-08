@@ -10,9 +10,9 @@ public:
 
 	bool eventFilter(QObject* obj, QEvent* event);
 
-	void startIncrementalSearch();
+	void startInput();
 
-	void finishIncrementalSearch();
+	void finishInput();
 
 private Q_SLOTS:
 	void lineEditBottomTextChanged(const QString& text);

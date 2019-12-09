@@ -68,7 +68,7 @@ void Filer::initializeGlobalShortcutEvent()
 		HOTKEY_EVENT_ID,
 		MOD_CONTROL/* | MOD_ALT | MOD_SHIFT*/,
 		//https://docs.microsoft.com/ja-jp/windows/win32/inputdev/virtual-key-codes?redirectedfrom=MSDN
-		0x32/*2*/);
+		0x31/*1*/);
 	if (!result)
 	{
 		QMessageBox::warning(this, "Warning", QString("Failed to register hot key %1").arg(GetLastError()));

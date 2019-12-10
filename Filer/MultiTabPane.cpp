@@ -88,13 +88,13 @@ bool MultiTabPane::eventFilter(QObject *obj, QEvent *event)
 		case Qt::Key_J:
 			if (e->modifiers() & Qt::ControlModifier)
 			{
-				//Ctrl + J でタブ移動（左）
+				//Ctrl + J でタブ移動（右）
 				if (_tabWidget->currentIndex() >= 0 && _tabWidget->count() > 1)
 				{
-					auto newCurrentIndex = _tabWidget->currentIndex() - 1;
-					if (newCurrentIndex < 0)
+					auto newCurrentIndex = _tabWidget->currentIndex() + 1;
+					if (newCurrentIndex >= _tabWidget->count())
 					{
-						newCurrentIndex = _tabWidget->count() - 1;
+						newCurrentIndex = 0;
 					}
 					_tabWidget->setCurrentIndex(newCurrentIndex);
 				}
@@ -110,13 +110,13 @@ bool MultiTabPane::eventFilter(QObject *obj, QEvent *event)
 		case Qt::Key_K:
 			if (e->modifiers() & Qt::ControlModifier)
 			{
-				//Ctrl + K でタブ移動（右）
+				//Ctrl + K でタブ移動（左）
 				if (_tabWidget->currentIndex() >= 0 && _tabWidget->count() > 1)
 				{
-					auto newCurrentIndex = _tabWidget->currentIndex() + 1;
-					if (newCurrentIndex >= _tabWidget->count())
+					auto newCurrentIndex = _tabWidget->currentIndex() - 1;
+					if (newCurrentIndex < 0)
 					{
-						newCurrentIndex = 0;
+						newCurrentIndex = _tabWidget->count() - 1;
 					}
 					_tabWidget->setCurrentIndex(newCurrentIndex);
 				}

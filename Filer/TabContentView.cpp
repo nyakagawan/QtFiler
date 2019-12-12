@@ -257,14 +257,37 @@ void TabContentView::keyPressEvent(QKeyEvent *e)
 			// Return は Designer のショートカットの設定では効かないようなので、ハードコーディングする
 			Q_ASSERT(_folderModel);
 
-			const auto path = _folderModel->fileInfo(currentIndex()).absoluteFilePath();
-			if (e->modifiers() & Qt::ShiftModifier)
+			if (e->modifiers() & Qt::ControlModifier)
 			{
-				//emitOpenWithApp(path);
+				//Modifierありの場合はOSの関連付けでアプリ起動
+				QString filePath(_folderModel->filePath(currentIndex()).replace('/', '\\'));
+				SHELLEXECUTEINFOW sei = {
+					sizeof(sei),           // cbSize;
+					0,                     // fMask
+					NULL,                  // hwnd
+					NULL,                  // lpVerb
+					reinterpret_cast<LPCWSTR>(filePath.utf16()),// lpFile
+					NULL,					// lpParameters
+					NULL,                  // lpDirectory
+					SW_SHOWNORMAL,         // nShow
+					0,                     // hInstApp
+					NULL,                  // lpIDList
+					NULL,                  // lpClass
+					NULL,                  // hkeyClass
+					0,                     // dwHotKey
+					NULL,                  // hIcon
+					NULL                   // hProcess
+				};
+
+				if (!ShellExecuteEx(&sei))
+				{
+					HRESULT hr = HRESULT_FROM_WIN32(GetLastError());
+					qDebug() << "ShellExecuteEx had error: " << hr;
+				}
 			}
 			else
 			{
-				//emitOpen(path);
+				//テキスト、イメージファイルの場合はFiler上でPreview
 			}
 
 			e->accept();

@@ -20,6 +20,18 @@ DriveSelectListDialog::DriveSelectListDialog(QWidget* parent, QString currentPat
 {
 	_ui.verticalLayout->addWidget(_pView);
 	_pView->installEventFilter(this);
+
+	connect(
+		_pView,
+		&DriveSelectView::cursorMovedByHeadChar,
+		this,
+		&DriveSelectListDialog::onCursorMovedByHeadChar
+	);
+}
+
+void DriveSelectListDialog::onCursorMovedByHeadChar()
+{
+	accept();
 }
 
 QString DriveSelectListDialog::getRootPath() const

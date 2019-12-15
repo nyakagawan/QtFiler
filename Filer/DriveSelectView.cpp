@@ -4,10 +4,23 @@
 
 //=============================================================================
 //=============================================================================
+QString DriveListModel::ListItemDesktop::rootPath()
+{
+	return QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+}
+
+//=============================================================================
+//=============================================================================
 DriveListModel::DriveListModel(QObject *parent/* = Q_NULLPTR*/)
 	:QAbstractTableModel(parent)
 {
-	_driveList = QStorageInfo::mountedVolumes();
+	_driveList.append(QSharedPointer<ListItem>(new ListItemDesktop()));
+
+	for (const QStorageInfo& storageInfo : QStorageInfo::mountedVolumes())
+	{
+		_driveList.append(QSharedPointer<ListItem>(new ListItemDrive(storageInfo)));
+	}
+
 #if 0
 	for (QStorageInfo i : _driveList)
 	{
@@ -66,11 +79,11 @@ QVariant DriveListModel::data(const QModelIndex &modelIndex, int role) const
 		switch (sectionType)
 		{
 		case DriveListModel::Name:
-			return _driveList[iRow].rootPath();
+			return _driveList[iRow]->displayText();
 		case DriveListModel::FreeSize:
-			return QString("%L1").arg(bytesToGigaBytes(_driveList[iRow].bytesFree()));
+			return QString("%L1").arg(bytesToGigaBytes(_driveList[iRow]->bytesFree()));
 		case DriveListModel::TotalSize:
-			return QString("%L1").arg(bytesToGigaBytes(_driveList[iRow].bytesTotal()));
+			return QString("%L1").arg(bytesToGigaBytes(_driveList[iRow]->bytesTotal()));
 		default:
 			Q_ASSERT(false);
 			break;
@@ -120,7 +133,7 @@ int DriveListModel::findContainRow(const QString& path, Qt::CaseSensitivity cs/*
 {
 	for (int i = 0; i < _driveList.count(); ++i)
 	{
-		if (path.startsWith(_driveList[i].rootPath(), cs))
+		if (path.startsWith(_driveList[i]->displayText(), cs))
 		{
 			return i;
 		}
@@ -132,7 +145,7 @@ int DriveListModel::findHeadCharRow(const QChar headChar) const
 {
 	for (int i = 0; i < _driveList.count(); ++i)
 	{
-		if(_driveList[i].rootPath()[0].toLower() == headChar.toLower())
+		if(_driveList[i]->displayText()[0].toLower() == headChar.toLower())
 		{
 			return i;
 		}
@@ -144,7 +157,7 @@ int DriveListModel::findHeadCharRow(const QChar headChar) const
 QString DriveListModel::getRootPath(int row) const
 {
 	if(row >= 0 && row < _driveList.count())
-		return _driveList[row].rootPath();
+		return _driveList[row]->rootPath();
 	return QString();
 }
 
@@ -201,7 +214,7 @@ QString DriveSelectView::getRootPath()
 
 void DriveSelectView::keyPressEvent(QKeyEvent *e)
 {
-	if (e->modifiers() == Qt::KeyboardModifier::NoModifier && e->key() >= Qt::Key_A && e->key() <= Qt::Key_Z)
+	if (e->modifiers() == Qt::KeyboardModifier::NoModifier && QChar::isLetterOrNumber(e->key()))
 	{
 		//AlphabetKeyÇ™ë≈ÇΩÇÍÇΩèÍçáÇÕÅAÇªÇÍÇ™ì™ï∂éöÇÃDriveÇëIëÇ∑ÇÈ
 		//qDebug() << e->text();
@@ -210,6 +223,7 @@ void DriveSelectView::keyPressEvent(QKeyEvent *e)
 		{
 			setCursor(_pDriveListModel->index(row, 0));
 			e->accept();
+			emit cursorMovedByHeadChar();
 			return;
 		}
 	}

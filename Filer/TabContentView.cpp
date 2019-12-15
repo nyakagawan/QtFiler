@@ -48,12 +48,6 @@ TabContentView::TabContentView(QWidget *parent)
 	setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
 
 	connect(
-		this,
-		SIGNAL(customContextMenuRequested(QPoint)),
-		this,
-		SLOT(customContextMenuRequested(QPoint)));
-
-	connect(
 		_folderModel,
 		SIGNAL(directoryLoaded(QString)),
 		this,

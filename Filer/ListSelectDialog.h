@@ -22,6 +22,9 @@ public:
 
 	bool eventFilter(QObject *obj, QEvent *event);
 
+private slots:
+	void onCursorMovedByHeadChar();
+
 private:
 	class DriveSelectView* _pView = {};
 };

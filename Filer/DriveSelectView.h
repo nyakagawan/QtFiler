@@ -17,6 +17,36 @@ private:
 		MaxNum = Unknown
 	};
 
+	struct ListItem
+	{
+		virtual QString displayText() = 0;
+		virtual QString rootPath() = 0;
+		virtual qint64 bytesTotal() = 0;
+		virtual qint64 bytesFree() = 0;
+	};
+
+	struct ListItemDrive : public ListItem
+	{
+		ListItemDrive(QStorageInfo info)
+			:_storageInfo(info)
+		{
+		}
+		virtual QString displayText() override final { return _storageInfo.rootPath(); }
+		virtual QString rootPath() override final { return _storageInfo.rootPath(); }
+		virtual qint64 bytesTotal() override final { return _storageInfo.bytesTotal(); }
+		virtual qint64 bytesFree() override final { return _storageInfo.bytesFree(); }
+	private:
+		QStorageInfo _storageInfo{};
+	};
+
+	struct ListItemDesktop : public ListItem
+	{
+		virtual QString displayText() override final { return "1: Dekstop"; }
+		virtual QString rootPath() override final;
+		virtual qint64 bytesTotal() override final { return -1; }
+		virtual qint64 bytesFree() override final { return -1; }
+	};
+
 public:
 	explicit DriveListModel(QObject *parent = Q_NULLPTR);
 	~DriveListModel();
@@ -39,7 +69,7 @@ private:
 	}
 
 private:
-	QList<QStorageInfo> _driveList = {};
+	QList<QSharedPointer<ListItem>> _driveList = {};
 };
 
 class DriveSelectView : public QTableView
@@ -51,6 +81,9 @@ public:
 	~DriveSelectView();
 
 	QString getRootPath();
+
+signals:
+	void cursorMovedByHeadChar();
 
 private:
 	void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;

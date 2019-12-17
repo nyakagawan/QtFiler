@@ -2,7 +2,7 @@ setlocal
 set RootDir=%~dp0..
 set ExePath=%RootDir%\x64\Release\Filer.exe
 set ZipSrc=%RootDir%\x64\Release\*
-set ZipPath=%RootDir%\Tools\Release.zip
+set ZipPath=%RootDir%\Tools\Filer.zip
 
 call %~dp0ReleaseBuildVS2019.bat
 

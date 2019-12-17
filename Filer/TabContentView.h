@@ -30,6 +30,7 @@ private:
 	void listCursorDown();
 	void enterDirectory();
 	void goUpDirectory();
+	void removeSelectedItems();
 
 private slots:
 	void on_TabContentView_clicked(const QModelIndex &index);

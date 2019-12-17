@@ -48,12 +48,6 @@ int PlatformCompat::MoveToTrash(QList<QString> itemPathList)
 
 	HRESULT hr;
 
-	/*
-
-	DeleteItemsをつかうため色々調査実装中。
-	サンプルはVscodeにて
-
-	*/
 	int itemNum = itemPathList.size();
 	PCIDLIST_ABSOLUTE_ARRAY pIdlArray = new LPCITEMIDLIST[itemNum];
 	PIDLIST_ABSOLUTE abSourcePidl;
@@ -63,7 +57,9 @@ int PlatformCompat::MoveToTrash(QList<QString> itemPathList)
 		LPCWSTR cstr = reinterpret_cast<LPCWSTR>(itemPathList[i].replace('/', '\\').utf16());
 		hr = SHParseDisplayName(cstr, NULL, &abSourcePidl, 0, &attrs);
 		if (FAILED(hr))
-			return hr;
+		{
+			goto EXIT;
+		}
 		pIdlArray[i] = abSourcePidl;
 	}
 
@@ -106,7 +102,11 @@ int PlatformCompat::MoveToTrash(QList<QString> itemPathList)
 		CoUninitialize();
 	}
 
-	delete[] pIdlArray;
+EXIT:
+	if (pIdlArray)
+	{
+		delete[] pIdlArray;
+	}
 
 	return hr;
 }

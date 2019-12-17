@@ -97,6 +97,7 @@ bool MultiTabPane::eventFilter(QObject *obj, QEvent *event)
 						newCurrentIndex = 0;
 					}
 					_tabWidget->setCurrentIndex(newCurrentIndex);
+					setCurrentTabPathText(getCurrentView()->getPath());
 				}
 				return true;
 			}
@@ -119,6 +120,7 @@ bool MultiTabPane::eventFilter(QObject *obj, QEvent *event)
 						newCurrentIndex = _tabWidget->count() - 1;
 					}
 					_tabWidget->setCurrentIndex(newCurrentIndex);
+					setCurrentTabPathText(getCurrentView()->getPath());
 				}
 				return true;
 			}

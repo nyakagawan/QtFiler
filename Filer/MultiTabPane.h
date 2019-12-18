@@ -33,5 +33,6 @@ private:
 	QTabWidget *_tabWidget = {};
 	class IncrementalSearchModule* _pIncrementalSearch = {};
 	class PathJumpModule* _pPathJump = {};
+	class FileEditModule* _pFileEdit = {};
 };
 

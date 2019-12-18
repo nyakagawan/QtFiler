@@ -3,6 +3,7 @@
 #include "TabContentView.h"
 #include "IncrementalSearchModule.h"
 #include "PathJumpModule.h"
+#include "FileEditModule.h"
 #include "Settings.h"
 
 //-----------------------------------------------------------------------------
@@ -21,12 +22,14 @@ MultiTabPane::MultiTabPane(QWidget *parent)
 
 	_pIncrementalSearch = new IncrementalSearchModule(this, ui.lineEdit_bottom);
 	_pPathJump = new PathJumpModule(this, ui.lineEdit_bottom);
+	_pFileEdit = new FileEditModule(this, ui.lineEdit_bottom);
 }
 
 MultiTabPane::~MultiTabPane()
 {
 	delete _pIncrementalSearch;
 	delete _pPathJump;
+	delete _pFileEdit;
 }
 
 TabContentView * MultiTabPane::getCurrentView()
@@ -155,6 +158,18 @@ bool MultiTabPane::eventFilter(QObject *obj, QEvent *event)
 			{
 				//インクリメンタルサーチ開始
 				_pIncrementalSearch->startInput();
+				return true;
+			}
+			break;
+		case Qt::Key_E:
+			if (e->modifiers() == Qt::ShiftModifier)
+			{
+				//ファイルエディット入力開始
+				TabContentView* pView = getCurrentView();
+				if (pView)
+				{
+					_pFileEdit->startInput(pView->getPath());
+				}
 				return true;
 			}
 			break;

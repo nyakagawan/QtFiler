@@ -91,6 +91,7 @@ public:
 	QFile::Permissions permissions(const QModelIndex &index) const;
 	QFileInfo fileInfo(const QModelIndex &index) const;
 	bool remove(const QModelIndex &index);
+	bool removeItems(const QModelIndexList& indices);
 
 Q_SIGNALS:
 	void rootPathChanged(const QString &newPath);

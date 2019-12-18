@@ -7,6 +7,7 @@
 #include <QFileIconProvider>
 #include "FolderModel.h"
 #include "Types.h"
+#include "PlatformCompat.h"
 
 FolderModel::FolderModel(QObject *parent/* = Q_NULLPTR*/) :
 	QSortFilterProxyModel(parent),
@@ -772,9 +773,7 @@ QModelIndex FolderModel::mkdir(const QModelIndex &parent, const QString &name)
 
 bool FolderModel::rmdir(const QModelIndex &index)
 {
-	QFileSystemModel* fsModel = qobject_cast<QFileSystemModel*>(sourceModel());
-
-	return fsModel->rmdir(mapToSource(index));
+	return removeItems(QModelIndexList{ index });
 }
 
 QString FolderModel::fileName(const QModelIndex &index) const
@@ -807,7 +806,29 @@ QFileInfo FolderModel::fileInfo(const QModelIndex &index) const
 
 bool FolderModel::remove(const QModelIndex &index)
 {
-	QFileSystemModel* fsModel = qobject_cast<QFileSystemModel*>(sourceModel());
+	return removeItems(QModelIndexList{ index });
+}
 
-	return fsModel->remove(mapToSource(index));
+bool FolderModel::removeItems(const QModelIndexList& indices)
+{
+#ifdef Q_OS_WIN
+	QList<QString> pathArray{};
+	for (const QModelIndex& index : indices)
+	{
+		pathArray.append(filePath(index));
+	}
+
+	auto hr = PlatformCompat::MoveToTrash(pathArray);
+	if (FAILED(hr))
+	{
+		qDebug() << "move to trash failed: " << QString::number(hr).toInt(0, 8);
+		return false;
+	}
+	return true;
+#else
+	for (const QModelIndex& index : indices)
+	{
+		return fsModel->rmdir(mapToSource(index));
+	}
+#endif
 }

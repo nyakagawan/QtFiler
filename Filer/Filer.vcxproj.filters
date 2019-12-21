@@ -75,6 +75,9 @@
     <ClCompile Include="FileEditModule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LineEditBaseModule.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -125,6 +128,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="FileEditModule.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="ListEditBaseModule.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

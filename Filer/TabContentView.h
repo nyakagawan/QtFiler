@@ -17,6 +17,7 @@ public:
 
 	QItemSelectionModel::SelectionFlags selectionCommand(const QModelIndex &index, const QEvent *e = Q_NULLPTR) const Q_DECL_OVERRIDE;
 	void setModel(FolderModel *folderModel);
+	class FolderModel* getModel() { return _folderModel; }
 	void selectCurrent(QItemSelectionModel::SelectionFlag selectionFlag = QItemSelectionModel::Toggle);
 	void refresh(const QModelIndex& topLeft, const QModelIndex& bottomRight);
 	bool setPath(const QString &path);

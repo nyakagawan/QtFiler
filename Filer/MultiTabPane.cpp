@@ -23,6 +23,7 @@ MultiTabPane::MultiTabPane(QWidget *parent)
 	_pIncrementalSearch = new IncrementalSearchModule(this, ui.lineEdit_bottom);
 	_pPathJump = new PathJumpModule(this, ui.lineEdit_bottom);
 	_pFileEdit = new FileEditModule(this, ui.lineEdit_bottom);
+	_pMakeDir = new MakeDirLineEditModule(this, ui.lineEdit_bottom);
 }
 
 MultiTabPane::~MultiTabPane()
@@ -30,6 +31,7 @@ MultiTabPane::~MultiTabPane()
 	delete _pIncrementalSearch;
 	delete _pPathJump;
 	delete _pFileEdit;
+	delete _pMakeDir;
 }
 
 TabContentView * MultiTabPane::getCurrentView()
@@ -169,6 +171,17 @@ bool MultiTabPane::eventFilter(QObject *obj, QEvent *event)
 				if (pView)
 				{
 					_pFileEdit->startInput(pView->getPath());
+				}
+				return true;
+			}
+			break;
+		case Qt::Key_M:
+			{
+				//ディレクトリ作成入力開始
+				TabContentView* pView = getCurrentView();
+				if (pView)
+				{
+					_pMakeDir->startInput(pView->getPath());
 				}
 				return true;
 			}

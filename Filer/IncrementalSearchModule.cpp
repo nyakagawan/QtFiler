@@ -82,8 +82,6 @@ void IncrementalSearchModule::finishInput()
 	disconnect(_connLineEditBottomEditingFinished);
 	disconnect(_connLineEditBottomReturnPressed);
 
-	QString text = _pLineEdit->text();
-
 	_pLineEdit->setText("");
 	_pLineEdit->setReadOnly(true);
 	_pMultiTabPane->getCurrentView()->setFocus();

@@ -34,5 +34,6 @@ private:
 	class IncrementalSearchModule* _pIncrementalSearch = {};
 	class PathJumpModule* _pPathJump = {};
 	class FileEditModule* _pFileEdit = {};
+	class MakeDirLineEditModule* _pMakeDir = {};
 };
 

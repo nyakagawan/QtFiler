@@ -176,6 +176,7 @@ bool MultiTabPane::eventFilter(QObject *obj, QEvent *event)
 			}
 			break;
 		case Qt::Key_M:
+			if (e->modifiers() == Qt::ShiftModifier)
 			{
 				//ディレクトリ作成入力開始
 				TabContentView* pView = getCurrentView();

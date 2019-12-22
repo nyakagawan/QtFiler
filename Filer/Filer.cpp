@@ -47,6 +47,8 @@ Filer::Filer(QWidget *parent)
 
 	_pLeftTabPane = SettingUpTabs(this, ui.verticalLayout_left, true);
 	_pRightTabPane = SettingUpTabs(this, ui.verticalLayout_right, false);
+	_pLeftTabPane->setOpponent(_pRightTabPane);
+	_pRightTabPane->setOpponent(_pLeftTabPane);
 
 	auto settings = Settings::getInstance();
 	qDebug() << "getWindowSize: " << settings->getWindowSize();

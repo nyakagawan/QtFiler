@@ -22,6 +22,9 @@ public:
 	int getCurrentTabIndex()const { return _tabWidget->currentIndex(); }
 	void setCurrentTabIndex(int index);
 
+	MultiTabPane* getOpponent() const { return _opponent; }
+	void setOpponent(MultiTabPane* pOpp) { _opponent = pOpp; }
+
 	void onRootPathChanged(TabContentView* tabContentView, const QString& path);
 
 private:
@@ -30,6 +33,7 @@ private:
 
 private:
 	Ui::MultiTabPane ui = {};
+	MultiTabPane* _opponent {};
 	QTabWidget *_tabWidget = {};
 	class IncrementalSearchModule* _pIncrementalSearch = {};
 	class PathJumpModule* _pPathJump = {};

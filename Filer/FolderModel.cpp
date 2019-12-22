@@ -180,7 +180,23 @@ QVariant FolderModel::data(const QModelIndex &modelIndex, int role) const
 			}
 			else
 			{
-				ret = fi.size();
+				auto size = fi.size();
+				if (size < 1024)
+				{
+					ret = QString("%1").arg(size);
+				}
+				else if (size < (1024 * 1024))
+				{
+					ret = QString("%1K").arg((double)size / 1024, 0, 'f', 1);
+				}
+				else if (size < (1024 * 1024 * 1024))
+				{
+					ret = QString("%1M").arg((double)size / (1024.0 * 1024.0), 0, 'f', 1);
+				}
+				else
+				{
+					ret = QString("%1G").arg((double)size / (1024.0 * 1024.0 * 1024.0), 0, 'f', 1);
+				}
 			}
 			break;
 		case SectionType::LastModified:

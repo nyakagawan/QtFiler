@@ -11,11 +11,12 @@ LineEditBaseModule::LineEditBaseModule(MultiTabPane* pMultiTabPane, QLineEdit* p
 	:_pMultiTabPane(pMultiTabPane)
 	, _pLineEdit(pLineEdit)
 {
-	_pLineEdit->installEventFilter(this);
 }
 
 void LineEditBaseModule::startInput(const QString& currentDir)
 {
+	_pLineEdit->installEventFilter(this);
+
 	_currentDir = currentDir;
 
 	_pLineEdit->setText("");
@@ -50,6 +51,8 @@ void LineEditBaseModule::finishInput()
 	_pLineEdit->setText("");
 	_pLineEdit->setReadOnly(true);
 	_pMultiTabPane->getCurrentView()->setFocus();
+
+	_pLineEdit->removeEventFilter(this);
 }
 
 void LineEditBaseModule::lineEditTextChanged(const QString& text)

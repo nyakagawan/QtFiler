@@ -9,7 +9,7 @@
 //-----------------------------------------------------------------------------
 // MultiTabPane
 //-----------------------------------------------------------------------------
-MultiTabPane::MultiTabPane(QWidget *parent)
+MultiTabPane::MultiTabPane(QWidget* parent)
 	: QWidget(parent)
 {
 	ui.setupUi(this);
@@ -34,12 +34,12 @@ MultiTabPane::~MultiTabPane()
 	delete _pMakeDir;
 }
 
-TabContentView * MultiTabPane::getCurrentView()
+TabContentView* MultiTabPane::getCurrentView()
 {
 	return qobject_cast<TabContentView*>(_tabWidget->currentWidget());
 }
 
-void MultiTabPane::getTabs(QStringList & list) const
+void MultiTabPane::getTabs(QStringList& list) const
 {
 	for (int i = 0; i < _tabWidget->count(); ++i)
 	{
@@ -80,13 +80,13 @@ void MultiTabPane::onRootPathChanged(TabContentView* tabContentView, const QStri
 	setCurrentTabPathText(path);
 }
 
-bool MultiTabPane::eventFilter(QObject *obj, QEvent *event)
+bool MultiTabPane::eventFilter(QObject* obj, QEvent* event)
 {
 	//qDebug() << "MultiTabPane::eventFilter:" << event->type();
 
 	if (event->type() == QEvent::KeyPress)
 	{
-		QKeyEvent *e = static_cast<QKeyEvent *>(event);
+		QKeyEvent* e = static_cast<QKeyEvent*>(event);
 		//qDebug("Ate key press %d", e->key());
 		switch (e->key())
 		{

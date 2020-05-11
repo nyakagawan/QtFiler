@@ -7,13 +7,6 @@
 //-----------------------------------------------------------------------------
 // IncrementalSearchModule
 //-----------------------------------------------------------------------------
-IncrementalSearchModule::IncrementalSearchModule(MultiTabPane* pMultiTabPane, QLineEdit* pLineEdit)
-	:_pMultiTabPane(pMultiTabPane)
-	, _pLineEdit(pLineEdit)
-{
-	_pLineEdit->installEventFilter(this);
-}
-
 bool IncrementalSearchModule::eventFilter(QObject* obj, QEvent* event)
 {
 	if (!_pLineEdit)
@@ -51,57 +44,15 @@ bool IncrementalSearchModule::eventFilter(QObject* obj, QEvent* event)
 	return false;
 }
 
-void IncrementalSearchModule::startInput()
+void IncrementalSearchModule::lineEditTextChanged(const QString& text)
 {
-	_pLineEdit->setText("");
-	_pLineEdit->setReadOnly(false);
-	_pLineEdit->setFocus();
-
-	_connLineEditBottomTextChanged = connect(
-		_pLineEdit,
-		SIGNAL(textChanged(QString)),
-		this,
-		SLOT(lineEditBottomTextChanged(QString)));
-
-	_connLineEditBottomEditingFinished = connect(
-		_pLineEdit,
-		SIGNAL(editingFinished()),
-		this,
-		SLOT(lineEditBottomEditingFinished()));
-
-	_connLineEditBottomReturnPressed = connect(
-		_pLineEdit,
-		SIGNAL(returnPressed()),
-		this,
-		SLOT(lineEditBottomReturnPressed()));
-}
-
-void IncrementalSearchModule::finishInput()
-{
-	disconnect(_connLineEditBottomTextChanged);
-	disconnect(_connLineEditBottomEditingFinished);
-	disconnect(_connLineEditBottomReturnPressed);
-
-	_pLineEdit->setText("");
-	_pLineEdit->setReadOnly(true);
-	_pMultiTabPane->getCurrentView()->setFocus();
-}
-
-void IncrementalSearchModule::lineEditBottomTextChanged(const QString& text)
-{
-	qDebug() << "lineEditBottomTextChanged: " << text;
+	qDebug() << "IncrementalSearchModule::lineEditTextChanged: " << text;
 	_pMultiTabPane->getCurrentView()->incrementalSearch(text, 0, 1);
 }
 
-void IncrementalSearchModule::lineEditBottomEditingFinished()
+void IncrementalSearchModule::lineEditReturnPressed()
 {
-	qDebug() << "lineEditBottomEditingFinished";
 	finishInput();
 }
 
-void IncrementalSearchModule::lineEditBottomReturnPressed()
-{
-	qDebug() << "lineEditBottomReturnPressed";
-	finishInput();
-}
 

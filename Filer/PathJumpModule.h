@@ -1,33 +1,23 @@
 #pragma once
 
-#include <QWidget>
+#include "ListEditBaseModule.h"
 
-class PathJumpModule : public QObject
+class PathJumpModule : public LineEditBaseModule
 {
 	Q_OBJECT
 public:
-	PathJumpModule(class MultiTabPane* pMultiTabPane, class QLineEdit* pLineEdit);
+	using LineEditBaseModule::LineEditBaseModule;
+
+	void startInput()
+	{
+		LineEditBaseModule::startInput("");
+	}
 
 	bool eventFilter(QObject* obj, QEvent* event);
 
-	void startInput();
-
-	void finishInput();
-
 private Q_SLOTS:
-	void lineEditTextChanged(const QString& text);
-
-	void lineEditEditingFinished();
-
-	void lineEditReturnPressed();
+	virtual void lineEditReturnPressed() override;
 
 private:
-	class MultiTabPane* _pMultiTabPane = {};
-	class QLineEdit* _pLineEdit = {};
-
-	QMetaObject::Connection _connLineEditTextChanged = {};
-	QMetaObject::Connection _connLineEditEditingFinished = {};
-	QMetaObject::Connection _connLineEditReturnPressed = {};
-
 	static QList<QString> _history;
 };

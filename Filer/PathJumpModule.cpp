@@ -9,13 +9,6 @@
 //-----------------------------------------------------------------------------
 QList<QString> PathJumpModule::_history = {};
 
-PathJumpModule::PathJumpModule(MultiTabPane* pMultiTabPane, QLineEdit* pLineEdit)
-	:_pMultiTabPane(pMultiTabPane)
-	, _pLineEdit(pLineEdit)
-{
-	_pLineEdit->installEventFilter(this);
-}
-
 bool PathJumpModule::eventFilter(QObject* obj, QEvent* event)
 {
 	if (!_pLineEdit)
@@ -54,53 +47,6 @@ bool PathJumpModule::eventFilter(QObject* obj, QEvent* event)
 	}
 
 	return false;
-}
-
-void PathJumpModule::startInput()
-{
-	_pLineEdit->setText("");
-	_pLineEdit->setReadOnly(false);
-	_pLineEdit->setFocus();
-
-	_connLineEditTextChanged = connect(
-		_pLineEdit,
-		SIGNAL(textChanged(QString)),
-		this,
-		SLOT(lineEditTextChanged(QString)));
-
-	_connLineEditEditingFinished = connect(
-		_pLineEdit,
-		SIGNAL(editingFinished()),
-		this,
-		SLOT(lineEditEditingFinished()));
-
-	_connLineEditReturnPressed = connect(
-		_pLineEdit,
-		SIGNAL(returnPressed()),
-		this,
-		SLOT(lineEditReturnPressed()));
-}
-
-void PathJumpModule::finishInput()
-{
-	disconnect(_connLineEditTextChanged);
-	disconnect(_connLineEditEditingFinished);
-	disconnect(_connLineEditReturnPressed);
-
-	_pLineEdit->setText("");
-	_pLineEdit->setReadOnly(true);
-	_pMultiTabPane->getCurrentView()->setFocus();
-}
-
-void PathJumpModule::lineEditTextChanged(const QString& text)
-{
-	qDebug() << "PathJumpModule::lineEditTextChanged: " << text;
-}
-
-void PathJumpModule::lineEditEditingFinished()
-{
-	qDebug() << "PathJumpModule::lineEditEditingFinished";
-	finishInput();
 }
 
 void PathJumpModule::lineEditReturnPressed()

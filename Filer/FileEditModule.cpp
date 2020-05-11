@@ -110,11 +110,11 @@ bool MakeDirLineEditModule::eventFilter(QObject* obj, QEvent* event)
 			const QString& text = _pLineEdit->text();
 			if (text.isEmpty())
 			{
-				//入力済みテキストがある場合は上下キーで補完候補を選択
+				//todo: 入力済みテキストがある場合は上下キーで補完候補を選択
 			}
 			else
 			{
-				//入力済みテキストがない場合は上下キーで履歴を選択
+				//todo: 入力済みテキストがない場合は上下キーで履歴を選択
 			}
 			return true;
 		}

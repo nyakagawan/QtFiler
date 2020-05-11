@@ -1,33 +1,24 @@
 #pragma once
 
-#include <QWidget>
+#include "ListEditBaseModule.h"
 
-class IncrementalSearchModule : public QObject
+class IncrementalSearchModule : public LineEditBaseModule
 {
 	Q_OBJECT
 public:
-	IncrementalSearchModule(class MultiTabPane* pMultiTabPane, class QLineEdit* pLineEdit);
+	using LineEditBaseModule::LineEditBaseModule;
 
-	bool eventFilter(QObject* obj, QEvent* event);
+	void startInput()
+	{
+		LineEditBaseModule::startInput("");
+	}
 
-	void startInput();
+	virtual bool eventFilter(QObject* obj, QEvent* event) override;
 
-	void finishInput();
-
-private Q_SLOTS:
-	void lineEditBottomTextChanged(const QString& text);
-
-	void lineEditBottomEditingFinished();
-
-	void lineEditBottomReturnPressed();
+protected Q_SLOTS:
+	virtual void lineEditTextChanged(const QString& text) override;
+	virtual void lineEditReturnPressed() override;
 
 private:
-	class MultiTabPane* _pMultiTabPane = {};
-	class QLineEdit* _pLineEdit = {};
-
-	QMetaObject::Connection _connLineEditBottomTextChanged = {};
-	QMetaObject::Connection _connLineEditBottomEditingFinished = {};
-	QMetaObject::Connection _connLineEditBottomReturnPressed = {};
-
 	QList<QModelIndex> _matchingIndexList = {};
 };

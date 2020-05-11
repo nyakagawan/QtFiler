@@ -22,6 +22,7 @@ public:
 	void refresh(const QModelIndex& topLeft, const QModelIndex& bottomRight);
 	bool setPath(const QString& path);
 	QString getPath() const;
+	QList<QString> getSelectedPaths() const;
 	void incrementalSearch(const QString& searchFilename, int startOffset, int searchDir);
 
 private:

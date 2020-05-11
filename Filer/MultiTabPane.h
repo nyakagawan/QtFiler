@@ -11,13 +11,13 @@ class MultiTabPane : public QWidget
 	Q_OBJECT
 
 public:
-	MultiTabPane(QWidget *parent = Q_NULLPTR);
+	MultiTabPane(QWidget* parent = Q_NULLPTR);
 	~MultiTabPane();
 
 	TabContentView* getCurrentView();
 
 	void addTab(const QString& path);
-	void getTabs(QStringList &list) const;
+	void getTabs(QStringList& list) const;
 
 	int getCurrentTabIndex()const { return _tabWidget->currentIndex(); }
 	void setCurrentTabIndex(int index);
@@ -28,16 +28,17 @@ public:
 	void onRootPathChanged(TabContentView* tabContentView, const QString& path);
 
 private:
-	bool eventFilter(QObject *obj, QEvent *event);
+	bool eventFilter(QObject* obj, QEvent* event);
 	void setCurrentTabPathText(const QString& path);
 
 private:
 	Ui::MultiTabPane ui = {};
-	MultiTabPane* _opponent {};
-	QTabWidget *_tabWidget = {};
+	MultiTabPane* _opponent{};
+	QTabWidget* _tabWidget = {};
 	class IncrementalSearchModule* _pIncrementalSearch = {};
 	class PathJumpModule* _pPathJump = {};
 	class FileEditModule* _pFileEdit = {};
 	class MakeDirLineEditModule* _pMakeDir = {};
+	class CopyItemLineEditModule* _pCopyItem = {};
 };
 

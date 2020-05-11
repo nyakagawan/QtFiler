@@ -2,7 +2,10 @@
 #include "FileEditModule.h"
 #include "Settings.h"
 #include "PlatformCompat.h"
+#include "FolderModel.h"
 #include <fstream>
+#include <filesystem>
+namespace fs = std::filesystem;
 
 
 //-----------------------------------------------------------------------------
@@ -49,12 +52,6 @@ bool FileEditModule::eventFilter(QObject* obj, QEvent* event)
 	return false;
 }
 
-void FileEditModule::lineEditEditingFinished()
-{
-	qDebug() << "FileEditModule::lineEditEditingFinished";
-	finishInput();
-}
-
 void FileEditModule::lineEditReturnPressed()
 {
 	QDir dir(_currentDir);
@@ -85,8 +82,6 @@ void FileEditModule::lineEditReturnPressed()
 //-----------------------------------------------------------------------------
 // MakeDirLineEditModule
 //-----------------------------------------------------------------------------
-#include "FolderModel.h"
-
 bool MakeDirLineEditModule::eventFilter(QObject* obj, QEvent* event)
 {
 	if (!_pLineEdit)
@@ -127,15 +122,6 @@ bool MakeDirLineEditModule::eventFilter(QObject* obj, QEvent* event)
 	return false;
 }
 
-void MakeDirLineEditModule::lineEditEditingFinished()
-{
-	qDebug() << "MakeDirLineEditModule::lineEditEditingFinished";
-	finishInput();
-}
-
-#include <filesystem>
-namespace fs = std::filesystem;
-
 void MakeDirLineEditModule::lineEditReturnPressed()
 {
 	fs::path path(_pLineEdit->text().toStdWString());
@@ -150,6 +136,74 @@ void MakeDirLineEditModule::lineEditReturnPressed()
 	{
 		fs::create_directories(path);
 	}
+
+	finishInput();
+}
+
+
+
+//-----------------------------------------------------------------------------
+// CopyItemLineEditModule
+//-----------------------------------------------------------------------------
+bool CopyItemLineEditModule::eventFilter(QObject* obj, QEvent* event)
+{
+	if (!_pLineEdit)
+		return  false;
+
+	//qDebug() << "CopyItemLineEditModule::eventFilter";
+	if (event->type() == QEvent::KeyPress)
+	{
+		QKeyEvent* e = static_cast<QKeyEvent*>(event);
+		//qDebug("Ate key press %d", e->key());
+		switch (e->key())
+		{
+		case Qt::Key_Escape:
+			//編集終了
+			finishInput();
+			return true;
+
+		case Qt::Key_Up:
+		case Qt::Key_Down:
+		{
+			const QString& text = _pLineEdit->text();
+			if (text.isEmpty())
+			{
+				//todo: 入力済みテキストがある場合は上下キーで補完候補を選択
+			}
+			else
+			{
+				//todo: 入力済みテキストがない場合は上下キーで履歴を選択
+			}
+			return true;
+		}
+
+		default:
+			break;
+		}
+	}
+
+	return false;
+}
+
+void CopyItemLineEditModule::lineEditReturnPressed()
+{
+	fs::path path(_pLineEdit->text().toStdWString());
+	if (path.is_relative())
+	{
+		path = fs::path(_currentDir.toStdWString()) / path;
+	}
+
+	path = fs::absolute(path);
+
+	if (!fs::is_directory(path))
+	{
+		if (!fs::create_directories(path))
+		{
+			return;
+		}
+	}
+
+	PlatformCompat::CopyItems(_copyItemPaths, QString::fromStdWString(path));
 
 	finishInput();
 }

@@ -24,6 +24,7 @@ MultiTabPane::MultiTabPane(QWidget* parent)
 	_pPathJump = new PathJumpModule(this, ui.lineEdit_bottom);
 	_pFileEdit = new FileEditModule(this, ui.lineEdit_bottom);
 	_pMakeDir = new MakeDirLineEditModule(this, ui.lineEdit_bottom);
+	_pCopyItem = new CopyItemLineEditModule(this, ui.lineEdit_bottom);
 }
 
 MultiTabPane::~MultiTabPane()
@@ -32,6 +33,7 @@ MultiTabPane::~MultiTabPane()
 	delete _pPathJump;
 	delete _pFileEdit;
 	delete _pMakeDir;
+	delete _pCopyItem;
 }
 
 TabContentView* MultiTabPane::getCurrentView()
@@ -187,6 +189,24 @@ bool MultiTabPane::eventFilter(QObject* obj, QEvent* event)
 				return true;
 			}
 			break;
+		case Qt::Key_C:
+		{
+			//Copy to the path user will determine
+			if (e->modifiers() & Qt::ShiftModifier)
+			{
+				TabContentView* pView = getCurrentView();
+				if (pView)
+				{
+					const auto& selectedItemPaths = pView->getSelectedPaths();
+					if (selectedItemPaths.count() > 0)
+					{
+						_pCopyItem->startInput(pView->getPath(), selectedItemPaths);
+					}
+				}
+				return true;
+			}
+			break;
+		}
 		default:
 			break;
 		}

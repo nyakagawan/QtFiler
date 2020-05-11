@@ -33,6 +33,7 @@ private:
 	void goUpDirectory();
 	void removeSelectedItems();
 	bool moveSelectedItems();
+	bool copySelectedItems();
 
 private slots:
 	void on_TabContentView_clicked(const QModelIndex &index);

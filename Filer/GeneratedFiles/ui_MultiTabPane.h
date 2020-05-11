@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'MultiTabPane.ui'
 **
-** Created by: Qt User Interface Compiler version 5.11.1
+** Created by: Qt User Interface Compiler version 5.14.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -28,17 +28,17 @@ public:
     void setupUi(QWidget *MultiTabPane)
     {
         if (MultiTabPane->objectName().isEmpty())
-            MultiTabPane->setObjectName(QStringLiteral("MultiTabPane"));
+            MultiTabPane->setObjectName(QString::fromUtf8("MultiTabPane"));
         MultiTabPane->resize(387, 348);
         verticalLayout = new QVBoxLayout(MultiTabPane);
         verticalLayout->setSpacing(0);
         verticalLayout->setContentsMargins(11, 11, 11, 11);
-        verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
+        verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
         verticalLayout->setContentsMargins(0, 0, 0, 0);
         lineEdit_top = new QLineEdit(MultiTabPane);
-        lineEdit_top->setObjectName(QStringLiteral("lineEdit_top"));
+        lineEdit_top->setObjectName(QString::fromUtf8("lineEdit_top"));
         QFont font;
-        font.setFamily(QStringLiteral("Consolas"));
+        font.setFamily(QString::fromUtf8("Consolas"));
         font.setPointSize(10);
         lineEdit_top->setFont(font);
         lineEdit_top->setFocusPolicy(Qt::NoFocus);
@@ -51,12 +51,12 @@ public:
 
         verticalLayout_center = new QVBoxLayout();
         verticalLayout_center->setSpacing(6);
-        verticalLayout_center->setObjectName(QStringLiteral("verticalLayout_center"));
+        verticalLayout_center->setObjectName(QString::fromUtf8("verticalLayout_center"));
 
         verticalLayout->addLayout(verticalLayout_center);
 
         lineEdit_bottom = new QLineEdit(MultiTabPane);
-        lineEdit_bottom->setObjectName(QStringLiteral("lineEdit_bottom"));
+        lineEdit_bottom->setObjectName(QString::fromUtf8("lineEdit_bottom"));
         lineEdit_bottom->setFont(font);
         lineEdit_bottom->setReadOnly(true);
 
@@ -70,7 +70,7 @@ public:
 
     void retranslateUi(QWidget *MultiTabPane)
     {
-        MultiTabPane->setWindowTitle(QApplication::translate("MultiTabPane", "MultiTabPane", nullptr));
+        MultiTabPane->setWindowTitle(QCoreApplication::translate("MultiTabPane", "MultiTabPane", nullptr));
     } // retranslateUi
 
 };

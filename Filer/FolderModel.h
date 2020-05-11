@@ -128,4 +128,7 @@ private:
 	QMap<ColorRoleType, QBrush> _brushes;
 
 	QItemSelectionModel* _selectionModel;
+
+	class MyFileSystemModel* _pFsModel{};
 };
+

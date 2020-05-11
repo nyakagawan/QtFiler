@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'TabContentView.ui'
 **
-** Created by: Qt User Interface Compiler version 5.11.1
+** Created by: Qt User Interface Compiler version 5.14.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -23,10 +23,10 @@ public:
     void setupUi(QTableView *TabContentView)
     {
         if (TabContentView->objectName().isEmpty())
-            TabContentView->setObjectName(QStringLiteral("TabContentView"));
+            TabContentView->setObjectName(QString::fromUtf8("TabContentView"));
         TabContentView->resize(400, 300);
         QFont font;
-        font.setFamily(QStringLiteral("Consolas"));
+        font.setFamily(QString::fromUtf8("Consolas"));
         font.setPointSize(10);
         TabContentView->setFont(font);
         TabContentView->setGridStyle(Qt::SolidLine);
@@ -42,7 +42,7 @@ public:
 
     void retranslateUi(QTableView *TabContentView)
     {
-        TabContentView->setWindowTitle(QApplication::translate("TabContentView", "TabContentView", nullptr));
+        TabContentView->setWindowTitle(QCoreApplication::translate("TabContentView", "TabContentView", nullptr));
     } // retranslateUi
 
 };

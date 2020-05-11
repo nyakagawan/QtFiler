@@ -9,6 +9,49 @@
 #include "Types.h"
 #include "PlatformCompat.h"
 
+class MyFileSystemModel : public QFileSystemModel
+{
+	using QFileSystemModel::QFileSystemModel;
+
+public:
+#if 1
+	int rowCount(const QModelIndex& parent = QModelIndex()) const override
+	{
+		int rowCount = rowCountReal(parent);
+		if (rowCount > 0)
+			return rowCount;
+		return 1;
+	}
+
+	int rowCountReal(const QModelIndex& parent = QModelIndex()) const
+	{
+		return QFileSystemModel::rowCount(parent);
+	}
+
+	QModelIndex index(int row, int column, const QModelIndex& parent = QModelIndex()) const override
+	{
+		QModelIndex ret = QFileSystemModel::index(row, column, parent);
+		if (ret == QModelIndex())
+		{
+			//qDebug() << "!!! empty";
+		}
+		return ret;
+	}
+#if 0
+	QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override
+	{
+		qDebug() << "row: " << index.row() << ", column: " << index.column();
+		QVariant ret = QFileSystemModel::data(index, role);
+		if (!ret.isValid())
+		{
+			qDebug() << "!!! invalid";
+		}
+		return ret;
+	}
+#endif
+#endif
+};
+
 FolderModel::FolderModel(QObject *parent/* = Q_NULLPTR*/) :
 	QSortFilterProxyModel(parent),
 	_sortColumn(0),
@@ -19,7 +62,8 @@ FolderModel::FolderModel(QObject *parent/* = Q_NULLPTR*/) :
 {
 	setSortCaseSensitivity(Qt::CaseInsensitive);
 
-	QFileSystemModel* fsModel = new QFileSystemModel(this);
+	_pFsModel = new MyFileSystemModel(this);
+	QFileSystemModel* fsModel = _pFsModel;
 
 	fsModel->setFilter(DEFAULT_FILTER_FLAGS);
 
@@ -131,6 +175,15 @@ QVariant FolderModel::data(const QModelIndex &modelIndex, int role) const
 		return ret;
 	}
 
+	if (_pFsModel->rowCountReal(modelIndex.parent()) == 0)
+	{
+		if (modelIndex.column() == 0)
+		{
+			ret = QString("__no_item__");
+			return ret;
+		}
+	}
+
 	SectionType sectionType = getSectionTypeFromColumn(modelIndex.column());
 	Q_ASSERT(sectionType != SectionType::Unknown);
 
@@ -158,6 +211,11 @@ QVariant FolderModel::data(const QModelIndex &modelIndex, int role) const
 			else
 			{
 				ret = fi.fileName();
+			}
+			if (ret == QString())
+			{
+				//qDebug() << "empty";
+				ret = QString("___NO_ITEM___");
 			}
 			break;
 		case SectionType::FileType:

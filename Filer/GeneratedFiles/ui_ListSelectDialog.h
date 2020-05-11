@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'ListSelectDialog.ui'
 **
-** Created by: Qt User Interface Compiler version 5.11.1
+** Created by: Qt User Interface Compiler version 5.14.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -26,15 +26,15 @@ public:
     void setupUi(QDialog *ListSelectDialog)
     {
         if (ListSelectDialog->objectName().isEmpty())
-            ListSelectDialog->setObjectName(QStringLiteral("ListSelectDialog"));
+            ListSelectDialog->setObjectName(QString::fromUtf8("ListSelectDialog"));
         ListSelectDialog->setWindowModality(Qt::WindowModal);
         ListSelectDialog->resize(367, 300);
         ListSelectDialog->setModal(true);
         gridLayout = new QGridLayout(ListSelectDialog);
-        gridLayout->setObjectName(QStringLiteral("gridLayout"));
+        gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
         gridLayout->setContentsMargins(2, 2, 2, 2);
         verticalLayout = new QVBoxLayout();
-        verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
+        verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
 
         gridLayout->addLayout(verticalLayout, 0, 0, 1, 1);
 
@@ -46,7 +46,7 @@ public:
 
     void retranslateUi(QDialog *ListSelectDialog)
     {
-        ListSelectDialog->setWindowTitle(QApplication::translate("ListSelectDialog", "Dialog", nullptr));
+        ListSelectDialog->setWindowTitle(QCoreApplication::translate("ListSelectDialog", "Dialog", nullptr));
     } // retranslateUi
 
 };

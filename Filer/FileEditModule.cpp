@@ -4,8 +4,10 @@
 #include "PlatformCompat.h"
 #include "FolderModel.h"
 #include <fstream>
+#ifdef __cpp_lib_filesystem
 #include <filesystem>
 namespace fs = std::filesystem;
+#endif
 
 
 //-----------------------------------------------------------------------------
@@ -124,6 +126,7 @@ bool MakeDirLineEditModule::eventFilter(QObject* obj, QEvent* event)
 
 void MakeDirLineEditModule::lineEditReturnPressed()
 {
+#ifdef __cpp_lib_filesystem
 	fs::path path(_pLineEdit->text().toStdWString());
 	if (path.is_relative())
 	{
@@ -136,7 +139,7 @@ void MakeDirLineEditModule::lineEditReturnPressed()
 	{
 		fs::create_directories(path);
 	}
-
+#endif
 	finishInput();
 }
 
@@ -187,6 +190,7 @@ bool CopyItemLineEditModule::eventFilter(QObject* obj, QEvent* event)
 
 void CopyItemLineEditModule::lineEditReturnPressed()
 {
+#ifdef __cpp_lib_filesystem
 	fs::path path(_pLineEdit->text().toStdWString());
 	if (path.is_relative())
 	{
@@ -204,7 +208,7 @@ void CopyItemLineEditModule::lineEditReturnPressed()
 	}
 
 	PlatformCompat::CopyItems(_copyItemPaths, QString::fromStdWString(path));
-
+#endif
 	finishInput();
 }
 

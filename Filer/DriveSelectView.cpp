@@ -11,7 +11,7 @@ QString DriveListModel::ListItemDesktop::rootPath()
 
 //=============================================================================
 //=============================================================================
-DriveListModel::DriveListModel(QObject *parent/* = Q_NULLPTR*/)
+DriveListModel::DriveListModel(QObject* parent/* = Q_NULLPTR*/)
 	:QAbstractTableModel(parent)
 {
 	_driveList.append(QSharedPointer<ListItem>(new ListItemDesktop()));
@@ -36,7 +36,7 @@ DriveListModel::DriveListModel(QObject *parent/* = Q_NULLPTR*/)
 		qDebug() << "bytesTotal: " << QString("%L1").arg(i.bytesTotal() / 1024 / 1024 / 1024) << "GB";
 		qDebug() << "bytesFree: " << QString("%L1").arg(i.bytesFree() / 1024 / 1024 / 1024) << "GB";
 		qDebug() << "bytesAvailable: " << QString("%L1").arg(i.bytesAvailable() / 1024 / 1024 / 1024) << "GB";
-	}
+}
 #endif
 }
 
@@ -57,7 +57,7 @@ int DriveListModel::columnCount(const QModelIndex& parent) const
 	return SectionType::MaxNum;
 }
 
-QVariant DriveListModel::data(const QModelIndex &modelIndex, int role) const
+QVariant DriveListModel::data(const QModelIndex& modelIndex, int role) const
 {
 	if (!modelIndex.isValid())
 	{
@@ -145,7 +145,7 @@ int DriveListModel::findHeadCharRow(const QChar headChar) const
 {
 	for (int i = 0; i < _driveList.count(); ++i)
 	{
-		if(_driveList[i]->displayText()[0].toLower() == headChar.toLower())
+		if (_driveList[i]->displayText()[0].toLower() == headChar.toLower())
 		{
 			return i;
 		}
@@ -156,7 +156,7 @@ int DriveListModel::findHeadCharRow(const QChar headChar) const
 
 QString DriveListModel::getRootPath(int row) const
 {
-	if(row >= 0 && row < _driveList.count())
+	if (row >= 0 && row < _driveList.count())
 		return _driveList[row]->rootPath();
 	return QString();
 }
@@ -178,9 +178,9 @@ DriveListModel::SectionType DriveListModel::getSectionTypeFromColumn(int column)
 
 //=============================================================================
 //=============================================================================
-DriveSelectView::DriveSelectView(QWidget *parent, QString currentPath)
+DriveSelectView::DriveSelectView(QWidget* parent, QString currentPath)
 	:QTableView(parent)
-	,_pDriveListModel(new DriveListModel(this))
+	, _pDriveListModel(new DriveListModel(this))
 {
 	setItemDelegate(new FolderViewStyledItemDelegate(this));
 
@@ -212,7 +212,7 @@ QString DriveSelectView::getRootPath()
 	return _pDriveListModel->getRootPath(currentIndex().row());
 }
 
-void DriveSelectView::keyPressEvent(QKeyEvent *e)
+void DriveSelectView::keyPressEvent(QKeyEvent* e)
 {
 	if (e->modifiers() == Qt::KeyboardModifier::NoModifier && QChar::isLetterOrNumber(e->key()))
 	{

@@ -17,15 +17,15 @@ private:
 	};
 
 public:
-	Filer(QWidget *parent = Q_NULLPTR);
+	Filer(QWidget* parent = Q_NULLPTR);
 
 	static Filer* getInstance() { return _pInstance; }
 	MultiTabPane* getLeftTabPane() { return _pLeftTabPane; }
 	MultiTabPane* getRightTabPane() { return _pRightTabPane; }
 
 protected:
-	void showEvent(QShowEvent *event) override;
-	void closeEvent(QCloseEvent *event) override;
+	void showEvent(QShowEvent* event) override;
+	void closeEvent(QCloseEvent* event) override;
 
 private:
 	void initializeGlobalShortcutEvent();

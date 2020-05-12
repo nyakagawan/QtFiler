@@ -5,16 +5,12 @@
 TEMPLATE = app
 TARGET = Filer
 DESTDIR = ../x64/Debug
-QT += core gui widgets
 CONFIG += debug
-DEFINES += _UNICODE WIN64 QT_DLL QT_WIDGETS_LIB
-INCLUDEPATH += ./GeneratedFiles \
-    . \
-    ./GeneratedFiles/$(ConfigurationName)
-PRECOMPILED_HEADER = stdafx.h
+LIBS += -L"."
 DEPENDPATH += .
-MOC_DIR += ./GeneratedFiles/$(ConfigurationName)
+MOC_DIR += .
 OBJECTS_DIR += debug
-UI_DIR += ./GeneratedFiles
-RCC_DIR += ./GeneratedFiles
+UI_DIR += .
+RCC_DIR += .
+include(Filer.pri)
 win32:RC_FILE = Filer.rc

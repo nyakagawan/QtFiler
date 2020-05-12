@@ -48,12 +48,12 @@ private:
 	};
 
 public:
-	explicit DriveListModel(QObject *parent = Q_NULLPTR);
+	explicit DriveListModel(QObject* parent = Q_NULLPTR);
 	~DriveListModel();
 
-	int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
+	int rowCount(const QModelIndex& parent = QModelIndex()) const Q_DECL_OVERRIDE;
 	int columnCount(const QModelIndex& parent = QModelIndex()) const Q_DECL_OVERRIDE;
-	QVariant data(const QModelIndex &modelIndex, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
+	QVariant data(const QModelIndex& modelIndex, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
 	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
 
 	int findContainRow(const QString& path, Qt::CaseSensitivity cs = Qt::CaseSensitive) const;
@@ -77,7 +77,7 @@ class DriveSelectView : public QTableView
 	Q_OBJECT
 
 public:
-	DriveSelectView(QWidget *parent, QString currentPath);
+	DriveSelectView(QWidget* parent, QString currentPath);
 	~DriveSelectView();
 
 	QString getRootPath();
@@ -86,7 +86,7 @@ signals:
 	void cursorMovedByHeadChar();
 
 private:
-	void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
+	void keyPressEvent(QKeyEvent* event) Q_DECL_OVERRIDE;
 	void setCursor(const QModelIndex& index);
 	void listCursorUp();
 	void listCursorDown();

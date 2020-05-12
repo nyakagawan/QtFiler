@@ -52,7 +52,7 @@ public:
 #endif
 };
 
-FolderModel::FolderModel(QObject *parent/* = Q_NULLPTR*/) :
+FolderModel::FolderModel(QObject* parent/* = Q_NULLPTR*/) :
 	QSortFilterProxyModel(parent),
 	_sortColumn(0),
 	_sortDirsType(SortDirsType::NoSpecify),
@@ -84,22 +84,22 @@ FolderModel::~FolderModel()
 	delete _selectionModel;
 }
 
-void FolderModel::onRootPathChanged(const QString &newPath)
+void FolderModel::onRootPathChanged(const QString& newPath)
 {
 	emitRootPathChanged(newPath);
 }
 
-void FolderModel::onFileRenamed(const QString &path, const QString &oldName, const QString &newName)
+void FolderModel::onFileRenamed(const QString& path, const QString& oldName, const QString& newName)
 {
 	emitFileRenamed(path, oldName, newName);
 }
 
-void FolderModel::onDirectoryLoaded(const QString &path)
+void FolderModel::onDirectoryLoaded(const QString& path)
 {
 	emitDirectoryLoaded(path);
 }
 
-QModelIndex FolderModel::index(const QString &path, int column/* = 0*/) const
+QModelIndex FolderModel::index(const QString& path, int column/* = 0*/) const
 {
 	QFileSystemModel* fsModel = qobject_cast<QFileSystemModel*>(sourceModel());
 
@@ -166,7 +166,7 @@ int FolderModel::columnCount(const QModelIndex& parent) const
 	return 4;
 }
 
-QVariant FolderModel::data(const QModelIndex &modelIndex, int role) const
+QVariant FolderModel::data(const QModelIndex& modelIndex, int role) const
 {
 	QVariant ret = QVariant();
 
@@ -204,14 +204,14 @@ QVariant FolderModel::data(const QModelIndex &modelIndex, int role) const
 			}
 			else
 #endif
-			if (!fi.isDir() && !fi.completeBaseName().isEmpty())
-			{
-				ret = fi.completeBaseName();
-			}
-			else
-			{
-				ret = fi.fileName();
-			}
+				if (!fi.isDir() && !fi.completeBaseName().isEmpty())
+				{
+					ret = fi.completeBaseName();
+				}
+				else
+				{
+					ret = fi.fileName();
+				}
 			if (ret == QString())
 			{
 				//qDebug() << "empty";
@@ -232,30 +232,30 @@ QVariant FolderModel::data(const QModelIndex &modelIndex, int role) const
 			}
 			else
 #endif
-			if (fi.isDir())
-			{
-				ret = QString("<Folder>");
-			}
-			else
-			{
-				auto size = fi.size();
-				if (size < 1024)
+				if (fi.isDir())
 				{
-					ret = QString("%1").arg(size);
-				}
-				else if (size < (1024 * 1024))
-				{
-					ret = QString("%1K").arg((double)size / 1024, 0, 'f', 1);
-				}
-				else if (size < (1024 * 1024 * 1024))
-				{
-					ret = QString("%1M").arg((double)size / (1024.0 * 1024.0), 0, 'f', 1);
+					ret = QString("<Folder>");
 				}
 				else
 				{
-					ret = QString("%1G").arg((double)size / (1024.0 * 1024.0 * 1024.0), 0, 'f', 1);
+					auto size = fi.size();
+					if (size < 1024)
+					{
+						ret = QString("%1").arg(size);
+					}
+					else if (size < (1024 * 1024))
+					{
+						ret = QString("%1K").arg((double)size / 1024, 0, 'f', 1);
+					}
+					else if (size < (1024 * 1024 * 1024))
+					{
+						ret = QString("%1M").arg((double)size / (1024.0 * 1024.0), 0, 'f', 1);
+					}
+					else
+					{
+						ret = QString("%1G").arg((double)size / (1024.0 * 1024.0 * 1024.0), 0, 'f', 1);
+					}
 				}
-			}
 			break;
 		case SectionType::LastModified:
 			ret = fi.lastModified().toString("yyyy-MM-dd HH:mm:ss");
@@ -382,7 +382,7 @@ QItemSelectionModel* FolderModel::getSelectionModel()
 	return _selectionModel;
 }
 
-void FolderModel::setSelect(int row, QItemSelectionModel::SelectionFlags selectionFlags, const QModelIndex &parentIndex)
+void FolderModel::setSelect(int row, QItemSelectionModel::SelectionFlags selectionFlags, const QModelIndex& parentIndex)
 {
 	if (_selectionModel != Q_NULLPTR)
 	{
@@ -411,7 +411,7 @@ void FolderModel::clearSelected()
 	}
 }
 
-bool FolderModel::lessThan(const QModelIndex &source_left, const QModelIndex &source_right) const
+bool FolderModel::lessThan(const QModelIndex& source_left, const QModelIndex& source_right) const
 {
 	QFileSystemModel* fsModel = qobject_cast<QFileSystemModel*>(sourceModel());
 
@@ -682,23 +682,23 @@ bool FolderModel::isSelected(const QModelIndex& index) const
 	return false;
 }
 
-void FolderModel::emitRootPathChanged(const QString &newPath)
+void FolderModel::emitRootPathChanged(const QString& newPath)
 {
 	emit rootPathChanged(newPath);
 }
 
-void FolderModel::emitFileRenamed(const QString &path, const QString &oldName, const QString &newName)
+void FolderModel::emitFileRenamed(const QString& path, const QString& oldName, const QString& newName)
 {
 	emit fileRenamed(path, oldName, newName);
 }
 
-void FolderModel::emitDirectoryLoaded(const QString &path)
+void FolderModel::emitDirectoryLoaded(const QString& path)
 {
 	emit directoryLoaded(path);
 }
 
 // QFileSystemModel specific API
-QModelIndex FolderModel::setRootPath(const QString &path)
+QModelIndex FolderModel::setRootPath(const QString& path)
 {
 	QFileSystemModel* fsModel = qobject_cast<QFileSystemModel*>(sourceModel());
 
@@ -719,7 +719,7 @@ QDir FolderModel::rootDirectory() const
 	return fsModel->rootDirectory();
 }
 
-void FolderModel::setIconProvider(QFileIconProvider *provider)
+void FolderModel::setIconProvider(QFileIconProvider* provider)
 {
 	QFileSystemModel* fsModel = qobject_cast<QFileSystemModel*>(sourceModel());
 
@@ -789,7 +789,7 @@ bool FolderModel::nameFilterDisables() const
 	return fsModel->nameFilterDisables();
 }
 
-void FolderModel::setNameFilters(const QStringList &filters)
+void FolderModel::setNameFilters(const QStringList& filters)
 {
 	QFileSystemModel* fsModel = qobject_cast<QFileSystemModel*>(sourceModel());
 
@@ -803,82 +803,82 @@ QStringList FolderModel::nameFilters() const
 	return fsModel->nameFilters();
 }
 
-QString FolderModel::filePath(const QModelIndex &index) const
+QString FolderModel::filePath(const QModelIndex& index) const
 {
 	QFileSystemModel* fsModel = qobject_cast<QFileSystemModel*>(sourceModel());
 
 	return fsModel->filePath(mapToSource(index));
 }
 
-bool FolderModel::isDir(const QModelIndex &index) const
+bool FolderModel::isDir(const QModelIndex& index) const
 {
 	QFileSystemModel* fsModel = qobject_cast<QFileSystemModel*>(sourceModel());
 
 	return fsModel->isDir(mapToSource(index));
 }
 
-qint64 FolderModel::size(const QModelIndex &index) const
+qint64 FolderModel::size(const QModelIndex& index) const
 {
 	QFileSystemModel* fsModel = qobject_cast<QFileSystemModel*>(sourceModel());
 
 	return fsModel->size(mapToSource(index));
 }
 
-QString FolderModel::type(const QModelIndex &index) const
+QString FolderModel::type(const QModelIndex& index) const
 {
 	QFileSystemModel* fsModel = qobject_cast<QFileSystemModel*>(sourceModel());
 
 	return fsModel->type(mapToSource(index));
 }
 
-QDateTime FolderModel::lastModified(const QModelIndex &index) const
+QDateTime FolderModel::lastModified(const QModelIndex& index) const
 {
 	QFileSystemModel* fsModel = qobject_cast<QFileSystemModel*>(sourceModel());
 
 	return fsModel->lastModified(mapToSource(index));
 }
 
-QModelIndex FolderModel::mkdir(const QModelIndex &parent, const QString &name)
+QModelIndex FolderModel::mkdir(const QModelIndex& parent, const QString& name)
 {
 	QFileSystemModel* fsModel = qobject_cast<QFileSystemModel*>(sourceModel());
 
 	return mapFromSource(fsModel->mkdir(mapToSource(parent), name));
 }
 
-bool FolderModel::rmdir(const QModelIndex &index)
+bool FolderModel::rmdir(const QModelIndex& index)
 {
 	return removeItems(QModelIndexList{ index });
 }
 
-QString FolderModel::fileName(const QModelIndex &index) const
+QString FolderModel::fileName(const QModelIndex& index) const
 {
 	QFileSystemModel* fsModel = qobject_cast<QFileSystemModel*>(sourceModel());
 
 	return fsModel->fileName(mapToSource(index));
 }
 
-QIcon FolderModel::fileIcon(const QModelIndex &index) const
+QIcon FolderModel::fileIcon(const QModelIndex& index) const
 {
 	QFileSystemModel* fsModel = qobject_cast<QFileSystemModel*>(sourceModel());
 
 	return fsModel->fileIcon(mapToSource(index));
 }
 
-QFile::Permissions FolderModel::permissions(const QModelIndex &index) const
+QFile::Permissions FolderModel::permissions(const QModelIndex& index) const
 {
 	QFileSystemModel* fsModel = qobject_cast<QFileSystemModel*>(sourceModel());
 
 	return fsModel->permissions(mapToSource(index));
 }
 
-QFileInfo FolderModel::fileInfo(const QModelIndex &index) const
+QFileInfo FolderModel::fileInfo(const QModelIndex& index) const
 {
 	QFileSystemModel* fsModel = qobject_cast<QFileSystemModel*>(sourceModel());
 
 	return fsModel->fileInfo(mapToSource(index));
 }
 
-bool FolderModel::remove(const QModelIndex &index)
+bool FolderModel::remove(const QModelIndex& index)
 {
 	return removeItems(QModelIndexList{ index });
 }
@@ -903,6 +903,6 @@ bool FolderModel::removeItems(const QModelIndexList& indices)
 	for (const QModelIndex& index : indices)
 	{
 		return fsModel->rmdir(mapToSource(index));
-	}
+}
 #endif
 }

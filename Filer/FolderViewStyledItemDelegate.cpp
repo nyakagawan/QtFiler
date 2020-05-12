@@ -9,12 +9,12 @@
 #include <QAbstractItemView>
 #include "settings.h"
 
-FolderViewStyledItemDelegate::FolderViewStyledItemDelegate(QObject *parent/* = Q_NULLPTR*/)
+FolderViewStyledItemDelegate::FolderViewStyledItemDelegate(QObject* parent/* = Q_NULLPTR*/)
 	: QStyledItemDelegate(parent)
 {
 }
 
-void FolderViewStyledItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+void FolderViewStyledItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
 	QStyleOptionViewItem opt = option;
 	opt.state &= ~QStyle::State_Selected;       // FolderModel の TextColorRole・BackgroundRole の Brush を使用するため、ここでは Selected を無効にする

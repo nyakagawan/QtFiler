@@ -23,47 +23,36 @@
       <Extensions>qrc;*</Extensions>
       <ParseFiles>false</ParseFiles>
     </Filter>
-    <Filter Include="Generated Files">
-      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
-      <Extensions>moc;h;cpp</Extensions>
-      <SourceControlFiles>False</SourceControlFiles>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Filer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="WindowsContextMenu.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TabContentView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MultiTabPane.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Settings.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="FolderViewStyledItemDelegate.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="FolderModel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ListSelectDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DriveSelectView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FileEditModule.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FolderModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FolderViewStyledItemDelegate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="IncrementalSearchModule.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LineEditBaseModule.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ListSelectDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiTabPane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PathJumpModule.cpp">
@@ -72,65 +61,48 @@
     <ClCompile Include="PlatformCompat.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FileEditModule.cpp">
+    <ClCompile Include="Settings.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LineEditBaseModule.cpp">
+    <ClCompile Include="TabContentView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="WindowsContextMenu.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FolderViewStyledItemDelegate.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Types.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ListSelectDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Define.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PlatformCompat.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <ClCompile Include="WindowsContextMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="Filer.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="TabContentView.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="MultiTabPane.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="Settings.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="FolderModel.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <QtMoc Include="DriveSelectView.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="IncrementalSearchModule.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="PathJumpModule.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="FileEditModule.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="FolderModel.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="IncrementalSearchModule.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
     <QtMoc Include="ListEditBaseModule.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="MultiTabPane.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="PathJumpModule.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Settings.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="TabContentView.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
@@ -138,13 +110,13 @@
     <QtUic Include="Filer.ui">
       <Filter>Form Files</Filter>
     </QtUic>
-    <QtUic Include="TabContentView.ui">
+    <QtUic Include="ListSelectDialog.ui">
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="MultiTabPane.ui">
       <Filter>Form Files</Filter>
     </QtUic>
-    <QtUic Include="ListSelectDialog.ui">
+    <QtUic Include="TabContentView.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>
@@ -157,6 +129,26 @@
     <ResourceCompile Include="Filer.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="memo.txt" />
+    <ClInclude Include="Define.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FolderViewStyledItemDelegate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ListSelectDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PlatformCompat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowsContextMenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
